@@ -1,0 +1,8 @@
+/build/
+/dist/
+/j2meclasses/
+/nbproject/private/
+/suite/
+*.bak.*
+*.class
+*.jar
