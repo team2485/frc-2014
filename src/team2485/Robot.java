@@ -1,50 +1,49 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package team2485;
 
-
-import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import team2485.auto.*;
+import team2485.comp.*;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
+ * Team 2485's code for our 2013 FRC season.
+ * Robot Name: ??UNKNOWN??
+ *
+ * @author Bryce Matsumori
+ * @author Marty Kausas
  */
 public class Robot extends IterativeRobot {
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
+
+    // Custom Classes
+    public static DriveTrain drive;
+    private Sequencer autoSequence;
+
     public void robotInit() {
-
+        drive = new DriveTrain(1, 2, 1, 1, 2);
     }
 
-    /**
-     * This function is called periodically during autonomous
-     */
+    public void autonomousInit() {
+        int autonomousType = (int) SmartDashboard.getNumber("autoType", SequencerFactory.NONE);
+        autoSequence = SequencerFactory.createAuto(autonomousType);
+    }
+
     public void autonomousPeriodic() {
-
+        autoSequence.run();
+        globalPeriodic();
     }
 
-    /**
-     * This function is called periodically during operator control
-     */
+    public void teleopInit() {
+    }
+
     public void teleopPeriodic() {
-        
+        globalPeriodic();
     }
-    
-    /**
-     * This function is called periodically during test mode
-     */
+
     public void testPeriodic() {
-    
+        globalPeriodic();
     }
-    
+
+    public void globalPeriodic() {
+
+    }
 }
