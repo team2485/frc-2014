@@ -16,10 +16,12 @@ public class Robot extends IterativeRobot {
 
     // Custom Classes
     public static DriveTrain drive;
+    public static Catapult catapult;
     private Sequencer autoSequence;
 
     public void robotInit() {
-        drive = new DriveTrain(1, 2, 1, 1, 2);
+        drive       = new DriveTrain(1, 2, 1, 1, 2);
+        catapult    = new Catapult(1, 2, 3);
     }
 
     public void autonomousInit() {

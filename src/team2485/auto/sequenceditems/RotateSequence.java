@@ -1,6 +1,7 @@
-package team2485.auto;
+package team2485.auto.sequenceditems;
 
 import team2485.Robot;
+import team2485.auto.SequencedItem;
 
 /**
  * Sequenced Item specialized for rotation
