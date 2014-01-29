@@ -15,12 +15,14 @@ public class Sequencer {
     private int currIndex;
     private long currIndexStartTime;
 
+    private static Vector sequencers = new Vector();
+
     /**
      * Creates a new {@code Sequencer} with no sequenced items.
      */
     public Sequencer() {
     }
-    
+
     /**
      * Creates a new {@code Sequencer} with the specified sequence's items.
      * @param other the other sequence
@@ -70,26 +72,30 @@ public class Sequencer {
     /**
      * Schedules the specified item to be run after all previous items have been run.
      * @param item the item to schedule
+     * @return A reference to this {@code Sequencer} for method chaining.
      *
      * @see SequencedItem
      * @see SequencedPause
      */
-    public void add(SequencedItem item) {
+    public Sequencer add(SequencedItem item) {
         sequenced.addElement(item);
+        return this;
     }
 
     /**
      * Schedules the specified item(s) to be run after all previous items have been run.
      * Specified items will be added in order.
      * @param items the items to schedule
+     * @return A reference to this {@code Sequencer} for method chaining.
      *
      * @see SequencedItem
      * @see SequencedPause
      */
-    public void add(SequencedItem[] items) {
+    public Sequencer add(SequencedItem[] items) {
         for (int i = 0; i < items.length; i++) {
             sequenced.addElement(items[i]);
         }
+        return this;
     }
 
     /**
@@ -117,11 +123,13 @@ public class Sequencer {
     /**
      * Clears all of the {@code SequencedItem}s.
      * The result of this operation will be that no items are sequenced.
+     * @return A reference to this {@code Sequencer} for method chaining.
      *
      * @see SequencedItem
      */
-    public void clear() {
+    public Sequencer clear() {
         sequenced.removeAllElements();
+        return this;
     }
 
     // </editor-fold>
@@ -162,7 +170,7 @@ public class Sequencer {
 
             if (currIndex >= sequenced.size())
                 return true; // finished
-            
+
             // execute next
             ((SequencedItem)sequenced.elementAt(currIndex)).run();
         }
@@ -190,12 +198,33 @@ public class Sequencer {
     }
 
     /**
+     * Sets whether this Sequencer should run when {@code Sequencer.runAll()} is called.
+     * @param enabled Run automatically?
+     * @return A reference to this {@code Sequencer} for method chaining.
+     */
+    public Sequencer auto(boolean enabled) {
+        if (enabled) if (!sequencers.contains(this)) sequencers.addElement(this);
+        else sequencers.removeElement(this);
+        return this;
+    }
+
+    /**
      * Creates a shallow copy of this {@code Sequencer}'s {@code SequencedItem}s.
      * @return a copy
-     * @throws CloneNotSupportedException never
      */
     protected Object clone() {
         Sequencer newSequencer = new Sequencer(this.asArray());
         return newSequencer;
+    }
+
+    /**
+     * Runs all the enabled {@code Sequencer}s.
+     * Use this instead of {@code run()}ning each {@code Sequencer} individually.
+     */
+    public static void runAll() {
+        for (int i = 0; i < sequencers.size(); i++) {
+            Object e = sequencers.elementAt(i);
+            if (e != null) ((Sequencer)e).run();
+        }
     }
 }
