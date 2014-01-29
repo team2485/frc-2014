@@ -10,6 +10,7 @@ import team2485.auto.SequencedItem;
  */
 public class ExtendTwoPistons implements SequencedItem {
 
+    // TODO: Figure out length
     private double length = 0.5;
 
     public void run() {

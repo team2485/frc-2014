@@ -14,6 +14,7 @@ import team2485.auto.sequenceditems.RetractSequence;
  */
 public class SequencerFactory {
 
+    // TODO: Figure out actual autonomous options
     // autonomous constants
     public static final int
             NONE       = 0,
@@ -22,12 +23,13 @@ public class SequencerFactory {
             THREE_BALL = 3;
 
     /**
-     * Returns any autnomous sequences requested
+     * Returns any autonomous sequences requested
      *
      * @param type
      * @return {@code Sequencer}
      */
     public static Sequencer createAuto(int type) {
+        // TODO: Create all autonomous sequences
         switch (type) {
             case ONE_BALL:
                 return new Sequencer(new SequencedItem[] {

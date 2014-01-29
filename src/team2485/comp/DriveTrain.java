@@ -1,7 +1,6 @@
 package team2485.comp;
 
 import edu.wpi.first.wpilibj.*;
-import team2485.auto.*;
 import team2485.util.*;
 
 /**
@@ -14,22 +13,34 @@ public class DriveTrain {
     private Talon leftDrive, rightDrive;
     private Gyro gyro;
     private Encoder encoder;
+    private Solenoid gearShifter;
+
+    // TODO: Find the speed ratings
+    private final double
+            NORMAL_SPEED_RATING = 0.7,
+            FAST_SPEED_RATING = 1.0,
+            SLOW_SPEED_RATING = 0.6;
+
+    private double driveSpeed = NORMAL_SPEED_RATING;
 
     // --- AUTONOMOUS --- //
     private DummyOutput dummyGyroOutput;
     private DummyOutput dummyEncoderOutput;
     private PIDController gyroPID;
     private PIDController encPID;
+    // TODO: Tune each PID values
     private double Kp_G_Rotate, Ki_G_Rotate, Kd_G_Rotate;
     private double Kp_G_Drive, Ki_G_Drive, Kd_G_Drive;
     private double Kp_E, Ki_E, Kd_E;
+    // TODO: Find all tolerances
     private double AbsTolerance_Gyro_DriveTo;
     private double AbsTolerance_Gyro_TurnTo;
     private double AbsTolerance_Enc;
+    // TODO: Find low speed rates
     private double lowEncRate;
     // --- END AUTO --- //
 
-    // --- CHEESY DRIVE STUFF --- //
+    // --- W.A.R. LORD DRIVE STUFF --- //
     private double oldWheel = 0.0;
     private double quickStopAccumulator = 0.0;
     private final double throttleDeadband = 0.1;
@@ -38,7 +49,7 @@ public class DriveTrain {
     // Constants from poof constant file
     private final double sensitivityHigh = 0.85;
     private final double sensitivityLow = 0.75;
-    // --- END CHEESY DRIVE STUFF --- //
+    // --- END DRIVE STUFF --- //
 
     /**
      * Default Constructor
@@ -48,11 +59,12 @@ public class DriveTrain {
      * @param gyro
      * @param encoder
      */
-    public DriveTrain(Talon leftDrive, Talon rightDrive, Gyro gyro, Encoder encoder) {
+    public DriveTrain(Talon leftDrive, Talon rightDrive, Gyro gyro, Encoder encoder, Solenoid gearShifter) {
         this.leftDrive      = leftDrive;
         this.rightDrive     = rightDrive;
         this.gyro           = gyro;
         this.encoder        = encoder;
+        this.gearShifter    = gearShifter;
 
         dummyGyroOutput     = new DummyOutput();
         dummyEncoderOutput  = new DummyOutput();
@@ -61,6 +73,9 @@ public class DriveTrain {
 
         gyroPID.setAbsoluteTolerance(AbsTolerance_Gyro_DriveTo);
         encPID.setAbsoluteTolerance(AbsTolerance_Enc);
+
+        gyro.reset();
+        encoder.reset();
     }
 
     /**
@@ -71,9 +86,10 @@ public class DriveTrain {
      * @param gyroPort
      * @param encoderPortA
      * @param encoderPortB
+     * @param gearShifterPort
      */
-    public DriveTrain(int leftDrivePort, int rightDrivePort, int gyroPort, int encoderPortA, int encoderPortB) {
-        this(new Talon(leftDrivePort), new Talon(rightDrivePort), new Gyro(gyroPort), new Encoder(encoderPortA, encoderPortB));
+    public DriveTrain(int leftDrivePort, int rightDrivePort, int gyroPort, int encoderPortA, int encoderPortB, int gearShifterPort) {
+        this(new Talon(leftDrivePort), new Talon(rightDrivePort), new Gyro(gyroPort), new Encoder(encoderPortA, encoderPortB), new Solenoid(gearShifterPort));
     }
 
     // <editor-fold defaultstate="collapsed" desc="Autonomous Methods">
@@ -131,6 +147,7 @@ public class DriveTrain {
         //        else
         //            encPID.setPID(Constant.Kp_E, 0, Constant.Kd_E);
 
+        // TODO: Find the right distance per pulse (put in constructor)
         encPID.setSetpoint(inches * 121.98);
         gyroPID.setSetpoint(0); // assumption that the gyro has been reset
 
@@ -169,8 +186,8 @@ public class DriveTrain {
 
         double wheelNonLinearity;
 
-        double wheel = handleDeadband(controllerX, wheelDeadband);
-        double throttle = -handleDeadband(controllerY, throttleDeadband);
+        double wheel = handleThreshold(controllerX, wheelDeadband);
+        double throttle = -handleThreshold(controllerY, throttleDeadband);
 
         double negInertia = wheel - oldWheel;
         oldWheel = wheel;
@@ -273,6 +290,7 @@ public class DriveTrain {
             rightPwm = -1.0;
         }
 
+        // TODO: Remove printlns after testing has been done
         System.out.println("Outputs pwm: \t(" + leftPwm + ", " + rightPwm + ")");
         System.out.println("Ang and Lin: \t(" + angularPower + ", " + linearPower + ")");
 
@@ -281,25 +299,87 @@ public class DriveTrain {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="General Methods">
-    public void setLeftRight(double leftOutput, double rightOutput) {
+    /**
+     * Sends outputs values to the left and right side
+     * of the drive base.
+     *
+     * @param leftOutput
+     * @param rightOutput
+     */
+    private void setLeftRight(double leftOutput, double rightOutput) {
         leftDrive.set(leftOutput);
         rightDrive.set(-rightOutput);
     }
 
-    public double handleDeadband(double val, double deadband) {
-        return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
+    /**
+     * Thresholds values
+     *
+     * @param val
+     * @param deadband
+     * @return
+     */
+    private double handleThreshold(double val, double threshold) {
+        return (Math.abs(val) > Math.abs(threshold)) ? val : 0.0;
     }
 
+    /**
+     * Set the gear boxes into high gear
+     */
+    public void highGear() {
+        gearShifter.set(true);
+    }
+
+    /**
+     * Set the gear boxes into low gear
+     */
+    public void lowGear() {
+        gearShifter.set(false);
+    }
+
+    /**
+     * Switch into high speed mode
+     */
+    public void setHighSpeed() { driveSpeed = FAST_SPEED_RATING; }
+
+    /**
+     * Switch into low speed mode
+     */
+    public void setLowSpeed() { driveSpeed = SLOW_SPEED_RATING; }
+
+    /**
+     * Switch to normal speed mode
+     */
+    public void setNormalSpeed() { driveSpeed = NORMAL_SPEED_RATING; }
+
+    /**
+     * Set the PID values for the gyro {@code PIDController}g
+     *
+     * @param Kp
+     * @param Ki
+     * @param Kd
+     */
     public void setPIDGyro(double Kp, double Ki, double Kd) {
         Kp_G_Rotate = Kp;
         Ki_G_Rotate = Ki;
         Kd_G_Rotate = Kd;
     }
 
+    /**
+     * Set the PID values for the encoder {@code PIDController}
+     *
+     * @param Kp
+     * @param Ki
+     * @param Kd
+     */
     public void setPIDEnc(double Kp, double Ki, double Kd) {
         Kp_E = Kp;
         Ki_E = Ki;
         Kd_E = Kd;
+    }
+
+    public void resetSensors() {
+        gyro.reset();
+        encoder.reset();
     }
     // </editor-fold>
 }

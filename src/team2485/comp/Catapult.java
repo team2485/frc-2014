@@ -42,11 +42,11 @@ public class Catapult {
     }
 
     /**
-     * 
+     *
      * @param shotConstant
      */
-    public void shoot(int shotConstant) {
-        SequencerFactory.createShot(shotConstant).run();
+    public void shoot(int shotType) {
+        SequencerFactory.createShot(shotType).run();
     }
 
     /**

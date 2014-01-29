@@ -23,7 +23,7 @@ public class RotateSequence implements SequencedItem {
     }
 
     public void run() {
-        done = Robot.drive.driveTo(angle);
+        done = Robot.drive.rotateTo(angle);
     }
 
     public double duration() {

@@ -18,8 +18,8 @@ public class DriveSequence implements SequencedItem {
      *
      * @param feet
      */
-    public DriveSequence(double feet) {
-        distance = feet;
+    public DriveSequence(double inches) {
+        distance = inches;
     }
 
     public void run() {
