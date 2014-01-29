@@ -24,17 +24,19 @@ public class Robot extends IterativeRobot {
     public static IntakeArm arm;
 
     private Sequencer autoSequence;
+    public static TargetTracker tracker;
 
     // WPI Classes
     Compressor compressor;
 
     public void robotInit() {
         // TODO: Add in the correct ports inside each constructor
-        drive       = new DriveTrain(1, 2, 3, 4, 5, 6);
-        catapult    = new Catapult(1, 2, 3);
-        arm         = new IntakeArm(1, 2, 3);
+        drive      = new DriveTrain(1, 2, 3, 4, 5, 6);
+        catapult   = new Catapult(1, 2, 3);
+        arm        = new IntakeArm(1, 2, 3);
 
-        compressor  = new Compressor(1, 1);
+        compressor = new Compressor(1, 1);
+        tracker    = new TargetTracker();
 
         Controllers.set(new Joystick(1), new Joystick(2));
     }

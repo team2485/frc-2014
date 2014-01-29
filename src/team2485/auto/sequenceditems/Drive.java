@@ -8,17 +8,17 @@ import team2485.auto.SequencedItem;
  *
  * @author Marty Kausas
  */
-public class DriveSequence implements SequencedItem {
+public class Drive implements SequencedItem {
 
     private double distance;
     private boolean done = false;
 
     /**
-     * Default constructor
+     * Drive forward the specified distance, in inches.
      *
-     * @param feet
+     * @param inches The distance.
      */
-    public DriveSequence(double inches) {
+    public Drive(double inches) {
         distance = inches;
     }
 
@@ -29,5 +29,4 @@ public class DriveSequence implements SequencedItem {
     public double duration() {
         return done ? 0 : Double.MAX_VALUE;
     }
-
 }

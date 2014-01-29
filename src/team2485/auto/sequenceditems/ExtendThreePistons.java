@@ -4,21 +4,16 @@ import team2485.Robot;
 import team2485.auto.SequencedItem;
 
 /**
- *
+ * Shoots using all three pistons (strong shot).
  * @author Marty Kausas
  * @author Camille Considine
  */
 public class ExtendThreePistons implements SequencedItem {
-
-    // TODO: Figure out length
-    private double length = 0.5;
-
     public void run() {
         Robot.catapult.extendThree();
     }
 
     public double duration() {
-        return length;
+        return 0.5; // TODO: Figure out length
     }
-
 }

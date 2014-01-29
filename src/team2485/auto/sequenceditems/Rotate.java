@@ -8,17 +8,17 @@ import team2485.auto.SequencedItem;
  *
  * @author Marty Kausas
  */
-public class RotateSequence implements SequencedItem {
+public class Rotate implements SequencedItem {
 
     private boolean done = false;
     private double angle;
 
     /**
-     * Default Constructor
+     * Rotate to the specified angle, in degrees.
      *
-     * @param angle
+     * @param angle The angle.
      */
-    public RotateSequence(double angle) {
+    public Rotate(double angle) {
         this.angle = angle;
     }
 

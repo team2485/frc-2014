@@ -8,17 +8,12 @@ import team2485.auto.SequencedItem;
  * @author Marty Kausas
  * @author Camille Considine
  */
-public class RetractSequence implements SequencedItem {
-
-    // TODO: Figure out length
-    private double length = 0.5;
-
+public class RetractShooter implements SequencedItem {
     public void run() {
         Robot.catapult.retract();
     }
-
+    
     public double duration() {
-        return length;
+        return 0.5; // TODO: Figure out length
     }
-
 }
