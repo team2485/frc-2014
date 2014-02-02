@@ -102,4 +102,34 @@ public class IntegratingIMU extends IMUAdvanced {
     public float getWorldLinearY() {
         return posY;
     }
+
+    /**
+     * Sets the current x position to the value.
+     * @param newX The updated x position.
+     */
+    public void setLinearX(float newX) {
+        posX = newX;
+    }
+
+    /**
+     * Sets the current y position to the value.
+     * @param newY The updated y position.
+     */
+    public void setLinearY(float newY) {
+        posY = newY;
+    }
+
+    /**
+     * Zeroes the current x velocity.
+     */
+    public void zeroLinearVelX() {
+        velX = 0;
+    }
+
+    /**
+     * Zeroes the current y velocity.
+     */
+    public void zeroLinearVelY() {
+        velY = 0;
+    }
 }

@@ -87,7 +87,7 @@ public class IMU extends SensorBase implements PIDSource, LiveWindowSendable, Ru
             ex.printStackTrace();
         }
         initIMU();
-        m_thread = new Thread(this);
+        m_thread = new Thread(this, "nav6 IMU");
         m_thread.start();
     }
 
@@ -386,7 +386,12 @@ public class IMU extends SensorBase implements PIDSource, LiveWindowSendable, Ru
                         }
                         else
                         {
-                            packet_length = IMUProtocol.decodeStreamResponse(received_data, i, bytes_remaining, response);
+                            try {
+                                packet_length = IMUProtocol.decodeStreamResponse(received_data, i, bytes_remaining, response);
+                            } catch (Exception e) {
+                                // possible parsing exceptions
+                                packet_length = 0;
+                            }
                             if (packet_length > 0) {
                                 packets_received++;
                                 setStreamResponse(response);
