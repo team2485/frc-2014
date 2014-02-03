@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         // TODO: Add in the correct ports inside each constructor
         drive      = new DriveTrain(1, 2, 3, 4, 5, 6);
-        catapult   = new Catapult(1, 2, 3);
+        catapult   = new Catapult(1, 2, 3, 4);
         arm        = new IntakeArm(1, 2, 3);
 
         compressor = new Compressor(1, 1);
@@ -85,19 +85,19 @@ public class Robot extends IterativeRobot {
         //<editor-fold defaultstate="collapsed" desc="Operator Controls">
         // --- START OPERATOR CONTROL --- //
         // Shooting controls
-        if (Controllers.getButton(1))
+        if (Controllers.getJoystickButton(1))
             catapult.shoot(SequencerFactory.STRONG_SHOT);
-        else if (Controllers.getButton(2))
+        else if (Controllers.getJoystickButton(2))
             catapult.shoot(SequencerFactory.MEDIUM_SHOT);
-        else if (Controllers.getButton(3))
+        else if (Controllers.getJoystickButton(3))
             catapult.shoot(SequencerFactory.WEAK_SHOT);
 
         // Arm position controls
-        else if (Controllers.getButton(4))
+        else if (Controllers.getJoystickButton(4))
             arm.setSetpoint(IntakeArm.IN_CATAPULT);
-        else if (Controllers.getButton(5))
+        else if (Controllers.getJoystickButton(5))
             arm.setSetpoint(IntakeArm.UP_CONFIGURATION);
-        else if (Controllers.getButton(6))
+        else if (Controllers.getJoystickButton(6))
             arm.setSetpoint(IntakeArm.PICKUP);
 
         // TODO: Find the joystick threshold value

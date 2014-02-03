@@ -46,7 +46,7 @@ public class DriveTrain {
     private final double throttleDeadband = 0.1;
     private final double wheelDeadband = 0.1;
 
-    // Constants from poof constant file
+    // Constants from old file
     private final double sensitivityHigh = 0.85;
     private final double sensitivityLow = 0.75;
     // --- END DRIVE STUFF --- //

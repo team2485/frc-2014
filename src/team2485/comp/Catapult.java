@@ -14,20 +14,22 @@ public class Catapult {
     private Solenoid
             solenoid1,
             solenoid2,
-            solenoid3;
+            solenoid3,
+            shoeAdjuster;
 
     /**
-     * Default Constructor
+     * Constructor using {@code Solenoid} objects
      *
      * @param solenoidLeft
      * @param solenoidMiddle
      * @param solenoidRight
+     * @param shoeAdjuster
      */
-    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight) {
-        this.solenoid1 = solenoidLeft;
-        this.solenoid2 = solenoidMiddle;
-        this.solenoid3 = solenoidRight;
-
+    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid shoeAdjuster) {
+        this.solenoid1      = solenoidLeft;
+        this.solenoid2      = solenoidMiddle;
+        this.solenoid3      = solenoidRight;
+        this.shoeAdjuster   = shoeAdjuster;
     }
 
     /**
@@ -36,9 +38,10 @@ public class Catapult {
      * @param solenoidLeftPort
      * @param solenoidMiddlePort
      * @param solenoidRightPort
+     * @param shoeAdjusterPort
      */
-    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort) {
-        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort));
+    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort, int shoeAdjusterPort) {
+        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort), new Solenoid(shoeAdjusterPort));
     }
 
     /**
@@ -83,5 +86,19 @@ public class Catapult {
         solenoid1.set(false);
         solenoid2.set(false);
         solenoid3.set(false);
+    }
+
+    /**
+     * Puts the shoe piston into the intake position
+     */
+    public void setIntakePosition() {
+        shoeAdjuster.set(false);
+    }
+
+    /**
+     * Puts the shoe piston into the shooting position
+     */
+    public void setShootingPosition() {
+        shoeAdjuster.set(true);
     }
 }

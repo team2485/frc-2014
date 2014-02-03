@@ -9,6 +9,7 @@ import team2485.auto.sequenceditems.*;
  * @author Bryce Matsumori
  */
 public class SequencerFactory {
+
     public static final int
             // Autonomous options
             // TODO: Figure out actual autonomous options
@@ -65,20 +66,26 @@ public class SequencerFactory {
         switch (type) {
             case WEAK_SHOT:
                 return new Sequencer(new SequencedItem[] {
+                    new ExtendShoe(),
                     new ExtendOnePiston(),
-                    new RetractShooter()
+                    new RetractShooter(),
+                    new RetractShoe()
                 });
 
             case MEDIUM_SHOT:
                 return new Sequencer(new SequencedItem[] {
+                    new ExtendShoe(),
                     new ExtendTwoPistons(),
-                    new RetractShooter()
+                    new RetractShooter(),
+                    new RetractShoe()
                 });
 
             case STRONG_SHOT:
                 return new Sequencer(new SequencedItem[] {
+                    new ExtendShoe(),
                     new ExtendThreePistons(),
-                    new RetractShooter()
+                    new RetractShooter(),
+                    new RetractShoe()
                 });
 
             default: return new Sequencer(); // return an empty sequence
