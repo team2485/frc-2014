@@ -355,7 +355,7 @@ public class IMU extends SensorBase implements PIDSource, LiveWindowSendable, Ru
 
         byte[] stream_command = new byte[256];
 
-        int cmd_packet_length = IMUProtocol.encodeStreamCommand( stream_command, update_type, update_rate_hz );
+	int cmd_packet_length = IMUProtocol.encodeStreamCommand( stream_command, update_type, update_rate_hz );
         try {
             serial_port.reset();
             serial_port.write( stream_command, cmd_packet_length );
@@ -366,6 +366,14 @@ public class IMU extends SensorBase implements PIDSource, LiveWindowSendable, Ru
 
         while (!stop) {
             try {
+
+                // Wait, with delays to conserve CPU resources, until
+                // bytes have arrived.
+
+                while ( !stop && ( serial_port.getBytesReceived() < 1 ) ) {
+                    Timer.delay(0.1);
+                }
+
                 int packets_received = 0;
                 byte[] received_data = serial_port.read(256);
                 int bytes_read = received_data.length;

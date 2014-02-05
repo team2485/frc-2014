@@ -12,7 +12,7 @@
  * and resolves an issue wherein the read buffer length is forced to
  * be 1 byte in length.  Creating a new class was required since access to
  * the setRead
- * 
+ *
  * The current implementation uses the VISA formatted I/O mode.  This means that
  *   all traffic goes through the formatted buffers.  This allows the intermingled
  *   use of print(), readString(), and the raw buffer accessors read() and write().
@@ -32,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * The BufferingSerialPort class is a replacement for the WPI Library
- * SerialPort class.  As such, it is a modified Driver for the RS-232 
+ * SerialPort class.  As such, it is a modified Driver for the RS-232
  * serial port on the cRIO.
  *
  * NOTE:  This is a modified version of the WPILIBJ SerialPort class,
@@ -193,7 +193,7 @@ public class BufferingSerialPort {
 
         m_portHandle = Visa.viOpen(m_resourceManagerHandle, "ASRL1::INSTR", 0, 0);
         setFlowControl(BufferingSerialPort.FlowControl.kNone);
-        
+
         Visa.viSetAttribute(m_portHandle, Visa.VI_ATTR_ASRL_BAUD, baudRate);
 
         Visa.viSetAttribute(m_portHandle, Visa.VI_ATTR_ASRL_DATA_BITS, dataBits);
@@ -201,7 +201,7 @@ public class BufferingSerialPort {
         Visa.viSetAttribute(m_portHandle, Visa.VI_ATTR_ASRL_PARITY, parity.value);
 
         Visa.viSetAttribute(m_portHandle, Visa.VI_ATTR_ASRL_STOP_BITS, stopBits.value);
-        
+
         // Set the default read buffer size to 1 to return bytes immediately
         setReadBufferSize(1);
 
@@ -385,30 +385,30 @@ public class BufferingSerialPort {
     public void setTimeout(double timeout) throws VisaException {
         Visa.viSetAttribute(m_portHandle, Visa.VI_ATTR_TMO_VALUE, (int) (timeout * 1e3));
     }
-    
+
     /**
      * Specify the size of the input buffer.
-     * 
+     *
      * Specify the amount of data that can be stored before data
      * from the device is returned to Read.  If you want
      * data that is received to be returned immediately, set this to 1.
-     * 
+     *
      * It the buffer is not filled before the read timeout expires, all
      * data that has been received so far will be returned.
-     * 
+     *
      * @param size The read buffer size.
      */
     public void setReadBufferSize(int size) throws VisaException
     {
        Visa.viSetBuf(m_portHandle, Visa.VI_READ_BUF, size);
     }
-    
+
     /**
     * Specify the size of the output buffer.
-    * 
+    *
     * Specify the amount of data that can be stored before being
     * transmitted to the device.
-    * 
+    *
     * @param size The write buffer size.
     */
     void setWriteBufferSize(int size) throws VisaException
@@ -430,7 +430,7 @@ public class BufferingSerialPort {
     public void setWriteBufferMode(WriteBufferMode mode) throws VisaException {
         Visa.viSetAttribute(m_portHandle, Visa.VI_ATTR_WR_BUF_OPER_MODE, mode.value);
     }
-    
+
     /**
      * Force the output buffer to be written to the port.
      *

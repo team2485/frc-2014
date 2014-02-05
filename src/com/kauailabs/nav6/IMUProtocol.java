@@ -72,8 +72,8 @@ public class IMUProtocol {
     final static int GYRO_UPDATE_MAG_Z_VALUE_INDEX = 34;
     final static int GYRO_UPDATE_TEMP_VALUE_INDEX = 38;
     final static int GYRO_UPDATE_CHECKSUM_INDEX = 42;
-    final static int GYRO_UPDATE_TERMINATOR_INDEX = 44;    
-    
+    final static int GYRO_UPDATE_TERMINATOR_INDEX = 44;
+
     // EnableStream Command Packet - e.g., !S[stream type][checksum][cr][lf]
     public final static byte MSGID_STREAM_CMD = 'S';
     final static int STREAM_CMD_MESSAGE_LENGTH = 9;
@@ -100,15 +100,15 @@ public class IMUProtocol {
     final static int STREAM_RESPONSE_FLAGS        = 38;
     final static int STREAM_RESPONSE_CHECKSUM_INDEX = 42;
     final static int STREAM_RESPONSE_TERMINATOR_INDEX = 44;
-    
+
     public final static byte STREAM_MSG_TERMINATION_CHAR = (byte)'\n';
-    
+
     public final static short NAV6_FLAG_MASK_CALIBRATION_STATE = 0x03;
-    
+
     public final static short NAV6_CALIBRATION_STATE_WAIT =         0x00;
     public final static short NAV6_CALIBRATION_STATE_ACCUMULATE =   0x01;
     public final static short NAV6_CALIBRATION_STATE_COMPLETE =     0x02;
-    
+
     public final static int IMU_PROTOCOL_MAX_MESSAGE_LENGTH = QUATERNION_UPDATE_MESSAGE_LENGTH;
 
     static public class YPRUpdate {
@@ -183,7 +183,7 @@ public class IMUProtocol {
     }
 
     public static int decodeStreamResponse(byte[] buffer, int offset, int length, StreamResponse r) {
-        
+
         if (length < STREAM_RESPONSE_MESSAGE_LENGTH) {
             return 0;
         }
@@ -294,7 +294,7 @@ public class IMUProtocol {
 
     public static void encodeTermination(byte[] buffer, int total_length, int content_length) {
         if ((total_length >= (CHECKSUM_LENGTH + TERMINATOR_LENGTH)) && (total_length >= content_length + (CHECKSUM_LENGTH + TERMINATOR_LENGTH))) {
-            // Checksum 
+            // Checksum
             byte checksum = 0;
             for (int i = 0; i < content_length; i++) {
                 checksum += buffer[i];
