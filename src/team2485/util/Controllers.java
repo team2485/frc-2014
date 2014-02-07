@@ -63,9 +63,9 @@ public final class Controllers {
      */
     public static final int XBOX_AXIS_TRIGGER = 3;
     /**
-     * The primary Xbox 360 controller directional pad. Buggy, not recommended.
+     * The primary Xbox 360 controller horizontal directional pad axis.
      */
-    public static final int XBOX_AXIS_DPAD = 6;
+    public static final int XBOX_AXIS_DPAD_H = 6;
 
     // </editor-fold>
 
@@ -97,11 +97,11 @@ public final class Controllers {
      */
     public static final int XBOX_BTN_RBUMP = 6;
     /**
-     * The primary Xbox 360 controller back button.
+     * The primary Xbox 360 controller and Guitar Hero X-plorer back button.
      */
     public static final int XBOX_BTN_BACK = 7;
     /**
-     * The primary Xbox 360 controller start button.
+     * The primary Xbox 360 controller and Guitar Hero X-plorer start button.
      */
     public static final int XBOX_BTN_START = 8;
     /**
@@ -193,11 +193,57 @@ public final class Controllers {
     /**
      * The secondary joystick Z (twist) axis.
      */
-    public static final int JOYSTICK_AXIS_Z = 4;
+    public static final int JOYSTICK_AXIS_Z = 3;
     /**
      * The secondary joystick throttle axis.
      */
-    public static final int JOYSTICK_AXIS_THROTTLE = 5;
+    public static final int JOYSTICK_AXIS_THROTTLE = 4;
+
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Guitar Hero X-plorer Axes">
+
+    /**
+     * The X-plorer Y rotation axis.
+     */
+    public static final int XPLORER_AXIS_ROTATION_Y = 5;
+    /**
+     * The X-plorer Z rotation axis.
+     */
+    public static final int XPLORER_AXIS_ROTATION_Z = 3;
+    /**
+     * The X-plorer controller whammy axis.
+     */
+    public static final int XPLORER_AXIS_WHAMMY = 4;
+    /**
+     * The X-plorer horizontal directional pad axis.
+     */
+    public static final int XPLORER_AXIS_DPAD_H = 6;
+
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Guitar Hero X-plorer Buttons">
+
+    /**
+     * The green X-plorer button.
+     */
+    public static final int XPLORER_BUTTON1 = 1;
+    /**
+     * The red X-plorer button.
+     */
+    public static final int XPLORER_BUTTON2 = 2;
+    /**
+     * The yellow X-plorer button.
+     */
+    public static final int XPLORER_BUTTON3 = 4;
+    /**
+     * The blue X-plorer button.
+     */
+    public static final int XPLORER_BUTTON4 = 3;
+    /**
+     * The orange X-plorer button.
+     */
+    public static final int XPLORER_BUTTON5 = 5;
 
     // </editor-fold>
 
@@ -231,7 +277,7 @@ public final class Controllers {
     public static float getJoystickAxis(int axis, double inputThreshold) {
         if (secondary == null)
             throw new ControllerNullException("Secondary controller is null");
-        if (axis < 1 || axis == 3 || axis > 5)
+        if (axis < 1 || axis > 6)
             throw new IllegalArgumentException("Joystick axis (" + axis + ") is invalid.");
 
         float val = (float)secondary.getRawAxis(axis);
@@ -280,7 +326,7 @@ public final class Controllers {
         dump.xboxAxisRX           = (float)primary.getRawAxis(XBOX_AXIS_RX);
         dump.xboxAxisRY           = (float)primary.getRawAxis(XBOX_AXIS_RY);
         dump.xboxAxisTrigger      = (float)primary.getRawAxis(XBOX_AXIS_TRIGGER);
-        dump.xboxAxisDPad         = (float)primary.getRawAxis(XBOX_AXIS_DPAD);
+        dump.xboxAxisDPad         = (float)primary.getRawAxis(XBOX_AXIS_DPAD_H);
 
         dump.xboxBtnA             = primary.getRawButton(XBOX_BTN_A);
         dump.xboxBtnB             = primary.getRawButton(XBOX_BTN_B);
