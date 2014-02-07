@@ -26,6 +26,7 @@ public class IntegratingIMU extends IMUAdvanced {
     private long currentTime;
     private double deltaT;
     private float newAccX, newVelX, newAccY, newVelY;
+    private IMUDataHandler handler;
 
     public static final float GRAVITY = 9.80665f; // conversion from g's to m/s/s
 
@@ -45,10 +46,14 @@ public class IntegratingIMU extends IMUAdvanced {
         super(serial_port);
     }
 
+    public void setHandler(IMUDataHandler handler) {
+        this.handler = handler;
+    }
+
     protected int decodePacketHandler(byte[] received_data, int offset, int bytes_remaining) {
         packetLength = super.decodePacketHandler(received_data, offset, bytes_remaining);
 
-        // Timer.getFPGATimestamp() causes an out of memory error :(
+        // Timer.getFPGATimestamp() causes an out of memory error and the IMU to never stop calibrating :(
         // currentTime = Timer.getFPGATimestamp();
         // deltaT = currentTime - lastTime;
         currentTime = System.currentTimeMillis();
@@ -67,6 +72,8 @@ public class IntegratingIMU extends IMUAdvanced {
         accY  = newAccY;
         velY  = newVelY;
         lastTime = currentTime;
+
+        if (handler != null) handler.handleIMUData();
 
         return packetLength;
     }
@@ -131,5 +138,9 @@ public class IntegratingIMU extends IMUAdvanced {
      */
     public void zeroLinearVelY() {
         velY = 0;
+    }
+
+    public interface IMUDataHandler {
+        public void handleIMUData();
     }
 }

@@ -377,6 +377,10 @@ public class DriveTrain {
         Kd_E = Kd;
     }
 
+    public double getEncoderDistance() {
+        return encoder.getDistance();
+    }
+
     public void resetSensors() {
         gyro.reset();
         encoder.reset();

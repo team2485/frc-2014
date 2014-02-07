@@ -22,6 +22,7 @@ public class Robot extends IterativeRobot {
     public static DriveTrain drive;
     public static Catapult catapult;
     public static IntakeArm arm;
+    public static Locator locator;
 
     private Sequencer autoSequence;
     public static TargetTracker tracker;
@@ -37,6 +38,7 @@ public class Robot extends IterativeRobot {
 
         compressor = new Compressor(1, 1);
         tracker    = new TargetTracker();
+        locator   = new Locator();
 
         Controllers.set(new Joystick(1), new Joystick(2));
     }
@@ -116,6 +118,6 @@ public class Robot extends IterativeRobot {
     }
 
     public void globalPeriodic() {
-
+        SmartDashboard.putString("position", locator.toString());
     }
 }
