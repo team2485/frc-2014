@@ -1,6 +1,5 @@
 package team2485.comp;
 
-import team2485.util.TwoSpeedControllers;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
@@ -12,7 +11,7 @@ import edu.wpi.first.wpilibj.Talon;
  */
 public class IntakeArm {
 
-    private TwoSpeedControllers armMotors, rollerMotors;
+    private Talon armMotors, rollerMotors;
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
@@ -40,13 +39,13 @@ public class IntakeArm {
     public static double DEFAULT_ROLLER_SPEED = 0.8;
 
     /**
-     * Constructor takes references to speed controllers and pot used by intake
+     * Constructor takes references two talons and pot used by intake
      * system.
      * @param rollerMotors
      * @param armMotors
      * @param pot
      */
-    public IntakeArm(TwoSpeedControllers rollerMotors, TwoSpeedControllers armMotors, AnalogPotentiometer pot) {
+    public IntakeArm(Talon rollerMotors, Talon armMotors, AnalogPotentiometer pot) {
         this.armMotors      = armMotors;
         this.rollerMotors   = rollerMotors;
         this.pot            = pot;
@@ -59,14 +58,14 @@ public class IntakeArm {
     }
 
     /**
-     * Constructor takes PWM channels for motors and channel for pot on analog
+     * Constructor takes PWM channels for talons and channel for pot on analog
      * breakout port
      * @param rollerMotorChannel
      * @param armMotorChannel
      * @param potChannel
      */
     public IntakeArm(int rollerMotorChannel, int armMotorChannel, int potChannel) {
-        this(new TwoSpeedControllers(new Talon(rollerMotorChannel)), new TwoSpeedControllers(new Talon(armMotorChannel)), new AnalogPotentiometer(potChannel));
+        this(new Talon(rollerMotorChannel), new Talon(armMotorChannel), new AnalogPotentiometer(potChannel));
     }
 
     /**
@@ -162,6 +161,12 @@ public class IntakeArm {
     public void execute() {
         double potValue = pot.get();
 
+        // TODO: Find what values to keep the rollers on for
+//        if (50 > potValue && 400 < potValue)
+//            startRollers(1.0);
+//        else
+//            stopRollers();
+
         // TODO: Find what 50 should be...
         if (potValue < 50) {
             currentSetpoint = 50;
@@ -191,10 +196,10 @@ public class IntakeArm {
     }
 
     /**
-     * Returns current motor voltage
+     * Returns current arm motor voltage
      * @return
      */
-    public double getMotorVoltage() {
+    public double getMotorArmVoltage() {
         return armMotors.get();
     }
 

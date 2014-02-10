@@ -274,7 +274,7 @@ public final class Controllers {
      *
      * @see edu.wpi.first.wpilibj.Joystick
      */
-    public static float getJoystickAxis(int axis, double inputThreshold) {
+    public static float getJoystickAxis(int axis, float inputThreshold) {
         if (secondary == null)
             throw new ControllerNullException("Secondary controller is null");
         if (axis < 1 || axis > 6)

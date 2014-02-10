@@ -8,7 +8,7 @@ import team2485.util.Controllers;
 
 /**
  * Team 2485's code for our 2014 FRC season.
- * Robot Name: ??UNKNOWN??
+ * Robot Name: Odin
  *
  * @author Bryce Matsumori
  * @author Marty Kausas
@@ -27,12 +27,12 @@ public class Robot extends IterativeRobot {
     public static TargetTracker tracker;
 
     // WPI Classes
-    Compressor compressor;
+    private Compressor compressor;
 
     public void robotInit() {
         // TODO: Add in the correct ports inside each constructor
         drive      = new DriveTrain(1, 2, 3, 4, 5, 6);
-        catapult   = new Catapult(1, 2, 3, 4);
+        catapult   = new Catapult(1, 2, 3, 4, 5);
         arm        = new IntakeArm(1, 2, 3);
 
         compressor = new Compressor(1, 1);
@@ -58,8 +58,10 @@ public class Robot extends IterativeRobot {
 
         //<editor-fold defaultstate="collapsed" desc="Driver Controls">
         // --- START DRIVER CONTROLS --- //
-        drive.warlordDrive(Controllers.getJoystickAxis(Controllers.XBOX_AXIS_LY),
-                Controllers.getAxis(Controllers.XBOX_AXIS_RX));
+        // TODO: Figure out threshold values
+        drive.warlordDrive(
+                Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f),
+                Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f));
 
         // Controlling speeds with XBOX LT & RT
         if (Controllers.getAxis(Controllers.XBOX_AXIS_TRIGGER) > 0) {
@@ -77,7 +79,15 @@ public class Robot extends IterativeRobot {
             drive.highGear();
         }
 
-        // TODO: Add driver pickup position
+        // Quick turn
+        else if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP))
+            drive.setQuickTurn(true);
+        else if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP))
+            drive.setQuickTurn(false);
+
+        // Driver pickup controls
+        if (Controllers.getButton(Controllers.XBOX_BTN_X))
+            arm.setSetpoint(IntakeArm.PICKUP);
 
         // --- END DRIVER CONTROLS --- //
         //</editor-fold>
@@ -91,6 +101,8 @@ public class Robot extends IterativeRobot {
             catapult.shoot(SequencerFactory.MEDIUM_SHOT);
         else if (Controllers.getJoystickButton(3))
             catapult.shoot(SequencerFactory.WEAK_SHOT);
+        else if (Controllers.getJoystickButton(9))
+            catapult.shoot(SequencerFactory.SHORT_PASS);
 
         // Arm position controls
         else if (Controllers.getJoystickButton(4))
@@ -100,8 +112,16 @@ public class Robot extends IterativeRobot {
         else if (Controllers.getJoystickButton(6))
             arm.setSetpoint(IntakeArm.PICKUP);
 
+        else if (Controllers.getJoystickButton(7))
+            arm.startRollers(1.0);
+        else if (Controllers.getJoystickButton(8))
+            arm.stopRollers();
+
+        if (Math.abs(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_THROTTLE)) > 0.2)
+            arm.startRollers(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_THROTTLE));
+
         // TODO: Find the joystick threshold value
-        arm.moveArm(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2));
+        arm.moveArm(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
         // --- END OPERATOR CONTROL --- //
         //</editor-fold>
 

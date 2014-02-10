@@ -49,6 +49,7 @@ public class DriveTrain {
     // Constants from old file
     private final double sensitivityHigh = 0.85;
     private final double sensitivityLow = 0.75;
+    private boolean isQuickTurn = false;
     // --- END DRIVE STUFF --- //
 
     /**
@@ -180,7 +181,6 @@ public class DriveTrain {
      * @param controllerX
      */
     public void warlordDrive(double controllerY, double controllerX) {
-        boolean isQuickTurn = false; //controlBoard.getQuickTurn();
         boolean isHighGear = true;
         //        drive.shift(isHighGear);
 
@@ -297,6 +297,13 @@ public class DriveTrain {
         setLeftRight(leftPwm, -rightPwm);
     }
     // </editor-fold>
+
+    /**
+     * Sets the drive to quick turn mode
+     */
+    public void setQuickTurn(boolean isQuickTurn) {
+        this.isQuickTurn = isQuickTurn;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="General Methods">
     /**

@@ -15,7 +15,8 @@ public class Catapult {
             solenoid1,
             solenoid2,
             solenoid3,
-            shoeAdjuster;
+            solenoidShoeAdjuster,
+            solenoidBoot;
 
     /**
      * Constructor using {@code Solenoid} objects
@@ -24,12 +25,14 @@ public class Catapult {
      * @param solenoidMiddle
      * @param solenoidRight
      * @param shoeAdjuster
+     * @param solenoidBoot
      */
-    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid shoeAdjuster) {
-        this.solenoid1      = solenoidLeft;
-        this.solenoid2      = solenoidMiddle;
-        this.solenoid3      = solenoidRight;
-        this.shoeAdjuster   = shoeAdjuster;
+    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid solenoidShoeAdjuster, Solenoid solenoidBoot) {
+        this.solenoid1              = solenoidLeft;
+        this.solenoid2              = solenoidMiddle;
+        this.solenoid3              = solenoidRight;
+        this.solenoidShoeAdjuster   = solenoidShoeAdjuster;
+        this.solenoidBoot           = solenoidBoot;
     }
 
     /**
@@ -38,10 +41,10 @@ public class Catapult {
      * @param solenoidLeftPort
      * @param solenoidMiddlePort
      * @param solenoidRightPort
-     * @param shoeAdjusterPort
+     * @param solenoidShoeAdjusterPort
      */
-    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort, int shoeAdjusterPort) {
-        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort), new Solenoid(shoeAdjusterPort));
+    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort, int solenoidShoeAdjusterPort, int solenoidBoot) {
+        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort), new Solenoid(solenoidShoeAdjusterPort), new Solenoid(solenoidBoot));
     }
 
     /**
@@ -92,13 +95,27 @@ public class Catapult {
      * Puts the shoe piston into the intake position
      */
     public void setIntakePosition() {
-        shoeAdjuster.set(false);
+        solenoidShoeAdjuster.set(false);
     }
 
     /**
      * Puts the shoe piston into the shooting position
      */
     public void setShootingPosition() {
-        shoeAdjuster.set(true);
+        solenoidShoeAdjuster.set(true);
+    }
+
+    /**
+     * Extends the boot for a close pass
+     */
+    public void extendBoot() {
+        solenoidBoot.set(true);
+    }
+
+    /**
+     * Retracts the boot after a close pass
+     */
+    public void retractBoot() {
+        solenoidBoot.set(false);
     }
 }

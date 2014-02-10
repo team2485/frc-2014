@@ -21,7 +21,8 @@ public class SequencerFactory {
             // Shot options
             WEAK_SHOT   = 0,
             MEDIUM_SHOT = 1,
-            STRONG_SHOT = 2;
+            STRONG_SHOT = 2,
+            SHORT_PASS  = 3;
 
     private static final double TARGET_FLIP_PAUSE_TIME = 0.8;
 
@@ -86,6 +87,12 @@ public class SequencerFactory {
                     new ExtendThreePistons(),
                     new RetractShooter(),
                     new RetractShoe()
+                });
+
+            case SHORT_PASS:
+                return new Sequencer(new SequencedItem[] {
+                    new ExtendBoot(),
+                    new RetractBoot()
                 });
 
             default: return new Sequencer(); // return an empty sequence
