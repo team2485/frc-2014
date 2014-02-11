@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
  */
 public class TargetTracker {
     private NetworkTable table;
+    private int autoTrackState = -1;
 
     public static final int
             TRACK_NONE  = 0,
@@ -44,5 +45,28 @@ public class TargetTracker {
      */
     public double getDistance() {
         return table.getNumber("distance", -1);
+    }
+
+    /**
+     * Gets the track state saved for autonomous.
+     * @return The track state, or -1 if not set yet.
+     */
+    public int getAutoTrackState() {
+        return autoTrackState;
+    }
+
+    /**
+     * Save the current track state so we maintain the value throughout autonomous.
+     * This is so we don't change directions after starting.
+     */
+    public void setAutoTrackState() {
+        this.autoTrackState = getTrackState();
+    }
+
+    /**
+     * Reset the autonomous track state.
+     */
+    public void resetAutoTrackState() {
+        this.autoTrackState = -1;
     }
 }

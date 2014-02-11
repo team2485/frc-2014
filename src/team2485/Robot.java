@@ -22,9 +22,9 @@ public class Robot extends IterativeRobot {
     public static DriveTrain drive;
     public static Catapult catapult;
     public static IntakeArm arm;
+    public static TargetTracker tracker;
 
     private Sequencer autoSequence;
-    public static TargetTracker tracker;
 
     // WPI Classes
     private Compressor compressor;
@@ -44,6 +44,7 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
         int autonomousType = (int) SmartDashboard.getNumber("autoType", SequencerFactory.ONE_BALL);
         autoSequence = SequencerFactory.createAuto(autonomousType);
+        tracker.resetAutoTrackState();
     }
 
     public void autonomousPeriodic() {

@@ -46,6 +46,13 @@ public class SequencerFactory {
 
             case TWO_BALL:
                 return new Sequencer(new SequencedItem[] {
+                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
+                    new WaitForTargets(),
+                    new TurnToTarget(),
+                    new InnerSequencer(createShot(MEDIUM_SHOT)),
+                    new TurnToOtherTarget(),
+                    new InnerSequencer(createShot(MEDIUM_SHOT)), // TODO: fix magically gaining ball
+                    new Rotate(0.0) // rotate back to center
                 });
 
             case THREE_BALL:
