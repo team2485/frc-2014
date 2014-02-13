@@ -18,25 +18,22 @@ public class IntakeArm {
 
     // TODO: Tune the PID Constants
     public static double
-            kP_UP   = 0.001,
-            kI_UP   = 0,
-            kD_UP   = 0,
-            kP_DOWN = 0.001,
-            kI_DOWN = 0,
-            kD_DOWN = 0,
-            kP_STAT = 0.001,
-            kI_STAT = 0,
-            kD_STAT = 0;
+            kP = 0.01,
+            kI = 0,
+            kD = 0;
+
+    private boolean isPID = false;
 
     // TODO: Find these setpoints
     public static final double
-            IN_CATAPULT      = 200,
-            UP_CONFIGURATION = 500,
-            PICKUP           = 800;
+            IN_CATAPULT      = 3000,
+            UP_POSITION      = 2427,
+            PICKUP           = 2770,
+            POPPER_POSITION  = 2017;
 
-    private double currentSetpoint = UP_CONFIGURATION;
-    // TODO: Find the default speed
-    public static double DEFAULT_ROLLER_SPEED = 0.8;
+    private double currentSetpoint = UP_POSITION;
+    public static double ROLLERS_FORWARD = -1.0, ROLLERS_REVERSE = ROLLERS_FORWARD *= -1;
+    public static final int ABSOLUTE_TOLERANCE = 25;
 
     /**
      * Constructor takes references two talons and pot used by intake
@@ -50,11 +47,11 @@ public class IntakeArm {
         this.rollerMotors   = rollerMotors;
         this.pot            = pot;
 
-        currentSetpoint     = UP_CONFIGURATION;
-        armPID              = new PIDController(kP_UP, kI_UP, kD_UP, pot, armMotors);
+        currentSetpoint     = UP_POSITION;
+        armPID              = new PIDController(kP, kI, kD, pot, armMotors);
 
+        armPID.setAbsoluteTolerance(ABSOLUTE_TOLERANCE);
         armPID.setOutputRange(-1.0, 1.0);
-        armPID.enable();
     }
 
     /**
@@ -83,50 +80,23 @@ public class IntakeArm {
         rollerMotors.set(0);
     }
 
+    public double getPotValue() {
+        return pot.get();
+    }
+
 
     /**
-     * Sets PID values for up state
-     * In future, this will not have parameters b/c we should know values
+     * Sets PID values
      * @param Kp
      * @param Ki
      * @param Kd
      */
-    public void setPIDUp(double Kp, double Ki, double Kd) {
-        kP_UP = Kp;
-        kI_UP = Ki;
-        kD_UP = Kd;
+    public void setPID(double kP, double kI, double kD) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
 
-        armPID.setPID(kP_UP, kI_UP, kD_UP);
-    }
-
-    /**
-     * Sets PID values for down state
-     * In future, this will not have parameters b/c we should know values
-     * @param Kp
-     * @param Ki
-     * @param Kd
-     */
-     public void setPIDDown(double Kp, double Ki, double Kd) {
-        kP_DOWN = Kp;
-        kI_DOWN = Ki;
-        kD_DOWN = Kd;
-
-        armPID.setPID(kP_DOWN, kI_DOWN, kD_DOWN);
-    }
-
-     /**
-      * Sets PID values for stationary state
-      * In future, this will not have parameters b/c we should know values
-      * @param Kp
-      * @param Ki
-      * @param Kd
-      */
-     public void setPIDStationary(double Kp, double Ki, double Kd) {
-        kP_STAT = Kp;
-        kI_STAT = Ki;
-        kD_STAT = Kd;
-
-        armPID.setPID(kP_STAT, kI_STAT, kD_STAT);
+        armPID.setPID(kP, kI, kD);
     }
 
     /**
@@ -134,21 +104,30 @@ public class IntakeArm {
      * @param setpoint
      */
     public void setSetpoint(double setpoint) {
-        armPID.enable();
         armPID.setSetpoint(setpoint);
         currentSetpoint = setpoint;
+
+        isPID = true;
+
+        if (!armPID.onTarget()) {
+            armPID.enable();
+        } else
+            armPID.disable();
+
+        if (currentSetpoint == PICKUP)
+            startRollers(ROLLERS_FORWARD);
     }
 
     /**
      * Moves arm manually
      * @param direction
      */
-    public void moveArm(double direction) {
-        if (Math.abs(direction) > 0.5) {
+    public void moveArm(double speed) {
+        if (Math.abs(speed) > 0.5) {
             armPID.disable();
             currentSetpoint = armPID.getSetpoint();
             // TODO: Find the speeds we want for manual arm movement
-            armMotors.set(direction > 0 ? 0.5 : -0.5);
+            armMotors.set(speed);
         } else if (!armPID.isEnable()) {
             armMotors.set(0.0);
         }
@@ -158,8 +137,18 @@ public class IntakeArm {
      * Call this method in every execution of teleopPeriodic in order to ensure
      * the right PID gains are being used
      */
-    public void execute() {
+    public void run() {
         double potValue = pot.get();
+
+        if (isPID) {
+            if (!armPID.onTarget()) {
+                armPID.enable();
+            } else {
+                armPID.disable();
+                isPID = false;
+            }
+        }
+
 
         // TODO: Find what values to keep the rollers on for
 //        if (50 > potValue && 400 < potValue)
@@ -168,31 +157,19 @@ public class IntakeArm {
 //            stopRollers();
 
         // TODO: Find what 50 should be...
-        if (potValue < 50) {
-            currentSetpoint = 50;
-            armPID.setSetpoint(currentSetpoint);
-            armPID.enable();
-            setPIDStationary(kP_STAT, kI_STAT, kD_STAT);
-        } else if (potValue > 950) {
-            currentSetpoint = 950;
-            armPID.setSetpoint(currentSetpoint);
-            armPID.enable();
-            setPIDStationary(kP_STAT, kI_STAT, kD_STAT);
-        } else if (!armPID.isEnable()) {
-            // this left blank intentionally
-        } else if (armPID.onTarget()) {
-            setPIDStationary(kP_STAT, kI_STAT, kD_STAT);
-        } else if (potValue > UP_CONFIGURATION) {
-            if(potValue < currentSetpoint)
-                setPIDDown(kP_DOWN, kI_DOWN, kD_DOWN);
-            else
-                setPIDUp(kP_UP, kI_UP, kD_UP);
-        } else if (potValue < UP_CONFIGURATION) {
-            if(potValue < currentSetpoint)
-                setPIDUp(kP_UP, kI_UP, kD_UP);
-            else
-                setPIDDown(kP_DOWN, kI_DOWN, kD_DOWN);
-        }
+//        if (armPID.getSetpoint() < 2000 || potValue < 2000) {
+//            currentSetpoint = 2000;
+//            armPID.setSetpoint(currentSetpoint);
+//            armPID.enable();
+//            setPID(kP, kI, kD);
+//        } else if (potValue > 3000) {
+//            currentSetpoint = 3000;
+//            armPID.setSetpoint(currentSetpoint);
+//            armPID.enable();
+//            setPID(kP, kI, kD);
+//        }
+
+
     }
 
     /**

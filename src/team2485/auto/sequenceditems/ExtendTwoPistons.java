@@ -2,6 +2,7 @@ package team2485.auto.sequenceditems;
 
 import team2485.Robot;
 import team2485.auto.SequencedItem;
+import team2485.auto.SequencerFactory;
 
 /**
  * Shoots using two pistons (medium shot).
@@ -14,6 +15,6 @@ public class ExtendTwoPistons implements SequencedItem {
     }
 
     public double duration() {
-        return 0.5; // TODO: Figure out length
+        return SequencerFactory.RETRACT_EXTEND_TIME;
     }
 }

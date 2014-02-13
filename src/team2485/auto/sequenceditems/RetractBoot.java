@@ -2,6 +2,7 @@ package team2485.auto.sequenceditems;
 
 import team2485.Robot;
 import team2485.auto.SequencedItem;
+import team2485.auto.SequencerFactory;
 import team2485.comp.Catapult;
 
 /**
@@ -15,6 +16,6 @@ public class RetractBoot implements SequencedItem {
     }
 
     public double duration() {
-        return 0.5; // TODO: Figure out the duration
+        return SequencerFactory.RETRACT_EXTEND_TIME;
     }
 }

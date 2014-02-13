@@ -25,6 +25,7 @@ public class SequencerFactory {
             SHORT_PASS  = 3;
 
     private static final double TARGET_FLIP_PAUSE_TIME = 0.8;
+    public static final double RETRACT_EXTEND_TIME = 0.3; // TODO: figure out duration
 
     /**
      * Creates the requested autonomous sequence.

@@ -13,7 +13,7 @@ public class DriveTrain {
     private Talon leftDrive, rightDrive;
     private Gyro gyro;
     private Encoder encoder;
-    private Solenoid gearShifter;
+    private Solenoid gearShifter1, gearShifter2;
 
     // TODO: Find the speed ratings
     private final double
@@ -59,13 +59,16 @@ public class DriveTrain {
      * @param rightDrive
      * @param gyro
      * @param encoder
+     * @param gearShifter1
+     * @param gearShifter2
      */
-    public DriveTrain(Talon leftDrive, Talon rightDrive, Gyro gyro, Encoder encoder, Solenoid gearShifter) {
+    public DriveTrain(Talon leftDrive, Talon rightDrive, Gyro gyro, Encoder encoder, Solenoid gearShifter1, Solenoid gearShifter2) {
         this.leftDrive      = leftDrive;
         this.rightDrive     = rightDrive;
         this.gyro           = gyro;
         this.encoder        = encoder;
-        this.gearShifter    = gearShifter;
+        this.gearShifter1   = gearShifter1;
+        this.gearShifter2   = gearShifter2;
 
         dummyGyroOutput     = new DummyOutput();
         dummyEncoderOutput  = new DummyOutput();
@@ -79,6 +82,14 @@ public class DriveTrain {
         encoder.reset();
     }
 
+    public DriveTrain(Talon leftDrive, Talon rightDrive, Encoder encoder, Solenoid gearShifter1, Solenoid gearShifter2) {
+        this.leftDrive      = leftDrive;
+        this.rightDrive     = rightDrive;
+        this.encoder        = encoder;
+        this.gearShifter1   = gearShifter1;
+        this.gearShifter2   = gearShifter2;
+    }
+
     /**
      * Constructor using only ports instead of objects
      *
@@ -87,10 +98,11 @@ public class DriveTrain {
      * @param gyroPort
      * @param encoderPortA
      * @param encoderPortB
-     * @param gearShifterPort
+     * @param gearShifterPort1
+     * @param gearShifterPort2
      */
-    public DriveTrain(int leftDrivePort, int rightDrivePort, int gyroPort, int encoderPortA, int encoderPortB, int gearShifterPort) {
-        this(new Talon(leftDrivePort), new Talon(rightDrivePort), new Gyro(gyroPort), new Encoder(encoderPortA, encoderPortB), new Solenoid(gearShifterPort));
+    public DriveTrain(int leftDrivePort, int rightDrivePort, int gyroPort, int encoderPortA, int encoderPortB, int gearShifterPort1, int gearShifterPort2) {
+        this(new Talon(leftDrivePort), new Talon(rightDrivePort), new Gyro(gyroPort), new Encoder(encoderPortA, encoderPortB), new Solenoid(gearShifterPort1), new Solenoid(gearShifterPort2));
     }
 
     // <editor-fold defaultstate="collapsed" desc="Autonomous Methods">
@@ -181,8 +193,8 @@ public class DriveTrain {
      * @param controllerX
      */
     public void warlordDrive(double controllerY, double controllerX) {
-        boolean isHighGear = true;
-        //        drive.shift(isHighGear);
+        boolean isHighGear = isQuickTurn;
+//        drive.shift(isHighGear);
 
         double wheelNonLinearity;
 
@@ -291,15 +303,16 @@ public class DriveTrain {
         }
 
         // TODO: Remove printlns after testing has been done
-        System.out.println("Outputs pwm: \t(" + leftPwm + ", " + rightPwm + ")");
-        System.out.println("Ang and Lin: \t(" + angularPower + ", " + linearPower + ")");
+//        System.out.println("Outputs pwm: \t(" + leftPwm + ", " + rightPwm + ")");
+//        System.out.println("Ang and Lin: \t(" + angularPower + ", " + linearPower + ")");
 
-        setLeftRight(leftPwm, -rightPwm);
+        setLeftRight(leftPwm, rightPwm);
     }
     // </editor-fold>
 
     /**
      * Sets the drive to quick turn mode
+     * @param isQuickTurn
      */
     public void setQuickTurn(boolean isQuickTurn) {
         this.isQuickTurn = isQuickTurn;
@@ -314,8 +327,8 @@ public class DriveTrain {
      * @param rightOutput
      */
     private void setLeftRight(double leftOutput, double rightOutput) {
-        leftDrive.set(leftOutput);
-        rightDrive.set(-rightOutput);
+        leftDrive.set(leftOutput * driveSpeed);
+        rightDrive.set(-rightOutput * driveSpeed);
     }
 
     /**
@@ -333,14 +346,16 @@ public class DriveTrain {
      * Set the gear boxes into high gear
      */
     public void highGear() {
-        gearShifter.set(true);
+        gearShifter1.set(true);
+        gearShifter2.set(false);
     }
 
     /**
      * Set the gear boxes into low gear
      */
     public void lowGear() {
-        gearShifter.set(false);
+        gearShifter1.set(false);
+        gearShifter2.set(true);
     }
 
     /**

@@ -1,6 +1,7 @@
 package team2485.comp;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import team2485.auto.Sequencer;
 import team2485.auto.SequencerFactory;
 
 /**
@@ -18,13 +19,15 @@ public class Catapult {
             solenoidShoeAdjuster,
             solenoidBoot;
 
+    private Sequencer shootSequencer;
+
     /**
      * Constructor using {@code Solenoid} objects
      *
      * @param solenoidLeft
      * @param solenoidMiddle
      * @param solenoidRight
-     * @param shoeAdjuster
+     * @param solenoidShoeAdjuster
      * @param solenoidBoot
      */
     public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid solenoidShoeAdjuster, Solenoid solenoidBoot) {
@@ -52,7 +55,15 @@ public class Catapult {
      * @param shotConstant
      */
     public void shoot(int shotType) {
-        SequencerFactory.createShot(shotType).run();
+        if (shootSequencer == null) {
+            shootSequencer = SequencerFactory.createShot(shotType);
+        }
+    }
+
+    public void run() {
+        if (shootSequencer != null) {
+            if (shootSequencer.run()) shootSequencer = null;
+        }
     }
 
     /**
