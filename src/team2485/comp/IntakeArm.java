@@ -15,6 +15,7 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
+    private static int potSlippage = 40;
 
     // TODO: Tune the PID Constants
     public static double
@@ -26,10 +27,10 @@ public class IntakeArm {
 
     // TODO: Find these setpoints
     public static final double
-            IN_CATAPULT      = 3000,
-            UP_POSITION      = 2427,
-            PICKUP           = 2770,
-            POPPER_POSITION  = 2017;
+            IN_CATAPULT      = 3000 + potSlippage,
+            UP_POSITION      = 2390 + potSlippage,
+            PICKUP           = 2834 + potSlippage,
+            POPPER_POSITION  = 2017 + potSlippage;
 
     private double currentSetpoint = UP_POSITION;
     public static double ROLLERS_FORWARD = -1.0, ROLLERS_REVERSE = ROLLERS_FORWARD *= -1;
@@ -103,7 +104,7 @@ public class IntakeArm {
      * Sets setpoint
      * @param setpoint
      */
-    public void setSetpoint(double setpoint) {
+    public boolean setSetpoint(double setpoint) {
         armPID.setSetpoint(setpoint);
         currentSetpoint = setpoint;
 
@@ -116,6 +117,8 @@ public class IntakeArm {
 
         if (currentSetpoint == PICKUP)
             startRollers(ROLLERS_FORWARD);
+
+        return armPID.onTarget();
     }
 
     /**
@@ -139,6 +142,8 @@ public class IntakeArm {
      */
     public void run() {
         double potValue = pot.get();
+
+        System.out.println("pot val " + potValue);
 
         if (isPID) {
             if (!armPID.onTarget()) {

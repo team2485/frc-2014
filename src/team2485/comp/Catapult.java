@@ -1,5 +1,6 @@
 package team2485.comp;
 
+import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Solenoid;
 import team2485.auto.Sequencer;
 import team2485.auto.SequencerFactory;
@@ -20,6 +21,7 @@ public class Catapult {
             solenoidBoot;
 
     private Sequencer shootSequencer;
+    private AnalogChannel sonic;
 
     /**
      * Constructor using {@code Solenoid} objects
@@ -30,12 +32,13 @@ public class Catapult {
      * @param solenoidShoeAdjuster
      * @param solenoidBoot
      */
-    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid solenoidShoeAdjuster, Solenoid solenoidBoot) {
+    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid solenoidShoeAdjuster, Solenoid solenoidBoot, AnalogChannel sonic) {
         this.solenoid1              = solenoidLeft;
         this.solenoid2              = solenoidMiddle;
         this.solenoid3              = solenoidRight;
         this.solenoidShoeAdjuster   = solenoidShoeAdjuster;
         this.solenoidBoot           = solenoidBoot;
+        this.sonic                  = sonic;
     }
 
     /**
@@ -46,8 +49,8 @@ public class Catapult {
      * @param solenoidRightPort
      * @param solenoidShoeAdjusterPort
      */
-    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort, int solenoidShoeAdjusterPort, int solenoidBoot) {
-        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort), new Solenoid(solenoidShoeAdjusterPort), new Solenoid(solenoidBoot));
+    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort, int solenoidShoeAdjusterPort, int solenoidBoot, AnalogChannel sonic) {
+        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort), new Solenoid(solenoidShoeAdjusterPort), new Solenoid(solenoidBoot), sonic);
     }
 
     /**
@@ -102,6 +105,10 @@ public class Catapult {
         solenoid3.set(false);
     }
 
+    public void setShoe() {
+        solenoidShoeAdjuster.set(!solenoidShoeAdjuster.get());
+    }
+
     /**
      * Puts the shoe piston into the intake position
      */
@@ -128,5 +135,12 @@ public class Catapult {
      */
     public void retractBoot() {
         solenoidBoot.set(false);
+    }
+
+    public boolean inCatapult() {
+        if(sonic.getValue() < 25)
+            return true;
+        else
+            return false;
     }
 }

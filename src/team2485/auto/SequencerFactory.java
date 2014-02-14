@@ -1,6 +1,7 @@
 package team2485.auto;
 
 import team2485.auto.sequenceditems.*;
+import team2485.comp.IntakeArm;
 
 /**
  * The sequencer factory instantiates all robot sequences
@@ -38,22 +39,37 @@ public class SequencerFactory {
         switch (type) {
             case ONE_BALL:
                 return new Sequencer(new SequencedItem[] {
-                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
-                    new WaitForTargets(),
-                    new TurnToTarget(),
-                    new InnerSequencer(createShot(MEDIUM_SHOT)),
-                    new Rotate(0.0) // rotate back to center
+//                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
+//                    new WaitForTargets(),
+//                    new TurnToTarget(),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.WEAK_SHOT)),
+                    new Drive(30)
                 });
 
             case TWO_BALL:
                 return new Sequencer(new SequencedItem[] {
-                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
-                    new WaitForTargets(),
-                    new TurnToTarget(),
-                    new InnerSequencer(createShot(MEDIUM_SHOT)),
-                    new TurnToOtherTarget(),
-                    new InnerSequencer(createShot(MEDIUM_SHOT)), // TODO: fix magically gaining ball
-                    new Rotate(0.0) // rotate back to center
+//                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
+//                    new WaitForTargets(),
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.WEAK_SHOT)),
+//                    new MoveArm(IntakeArm.PICKUP),
+//                    new Drive(-10),
+//                    new SequencedPause(1),
+//                    new MoveArm(IntakeArm.IN_CATAPULT),
+//                    new StopRollers(),
+//                    new SequencedDoubleItem(new Drive(30), new InnerSequencer(SequencerFactory.createShot(SequencerFactory.WEAK_SHOT)))
+                    // wait for target
+//                    new SequencedDoubleItem(
+//                            new InnerSequencer(SequencerFactory.createShot(SequencerFactory.WEAK_SHOT)),
+//                            new MoveArm(IntakeArm.PICKUP)),
+//                    new Drive(-10),
+//                    new SequencedPause(pid.getNumber("P_Encoder_Drive")),
+//                    new ExtendShoe(),
+//                    new SequencedTripleItem(
+//                            new MoveArm(IntakeArm.IN_CATAPULT),
+//                            new StopRollers(),
+//                            new SequencedDoubleItem(
+//                                    new Drive(30),
+//                                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.WEAK_SHOT))))
                 });
 
             case THREE_BALL:
