@@ -96,6 +96,12 @@ public class Catapult {
         solenoid3.set(true);
     }
 
+    public void extendRightPiston() {
+        solenoid1.set(false);
+        solenoid2.set(false);
+        solenoid3.set(true);
+    }
+
     /**
      * Retracts all three catapult pistons
      */
@@ -105,7 +111,7 @@ public class Catapult {
         solenoid3.set(false);
     }
 
-    public void setShoe() {
+    public void toggleShoe() {
         solenoidShoeAdjuster.set(!solenoidShoeAdjuster.get());
     }
 

@@ -23,10 +23,11 @@ public class Rotate implements SequencedItem {
     }
 
     public void run() {
+        System.out.println("rotating to " + angle);
         done = Robot.drive.rotateTo(angle);
     }
 
     public double duration() {
-        return done ? 0 : Double.MAX_VALUE;
+        return done ? 0 : 1.5;
     }
 }

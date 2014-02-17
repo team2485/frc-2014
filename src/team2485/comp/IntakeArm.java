@@ -3,6 +3,7 @@ package team2485.comp;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
+import team2485.Robot;
 
 /**
  * Intake Arm class
@@ -15,7 +16,8 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static int potSlippage = 40;
+    private static int potSlippage = 10;
+    private boolean rollersOn = false;
 
     // TODO: Tune the PID Constants
     public static double
@@ -29,7 +31,7 @@ public class IntakeArm {
     public static final double
             IN_CATAPULT      = 3000 + potSlippage,
             UP_POSITION      = 2390 + potSlippage,
-            PICKUP           = 2834 + potSlippage,
+            PICKUP           = 2800 + potSlippage,
             POPPER_POSITION  = 2017 + potSlippage;
 
     private double currentSetpoint = UP_POSITION;
@@ -64,6 +66,14 @@ public class IntakeArm {
      */
     public IntakeArm(int rollerMotorChannel, int armMotorChannel, int potChannel) {
         this(new Talon(rollerMotorChannel), new Talon(armMotorChannel), new AnalogPotentiometer(potChannel));
+    }
+
+    public void toggleRollers() {
+        if (rollersOn)
+            startRollers(ROLLERS_FORWARD);
+        else
+            stopRollers();
+        rollersOn = !rollersOn;
     }
 
     /**
@@ -105,6 +115,16 @@ public class IntakeArm {
      * @param setpoint
      */
     public boolean setSetpoint(double setpoint) {
+        return setSetpoint(setpoint, true);
+    }
+
+    /**
+     * Sets setpoint and turns rollers on or off
+     * @param setpoint
+     * @param rollersOn
+     * @return
+     */
+    public boolean setSetpoint(double setpoint, boolean rollersOn) {
         armPID.setSetpoint(setpoint);
         currentSetpoint = setpoint;
 
@@ -115,11 +135,14 @@ public class IntakeArm {
         } else
             armPID.disable();
 
-        if (currentSetpoint == PICKUP)
+        if (currentSetpoint == PICKUP && rollersOn) {
             startRollers(ROLLERS_FORWARD);
+            Robot.catapult.setIntakePosition();
+        }
 
         return armPID.onTarget();
     }
+
 
     /**
      * Moves arm manually
@@ -183,6 +206,10 @@ public class IntakeArm {
      */
     public double getMotorArmVoltage() {
         return armMotors.get();
+    }
+
+    public boolean rollersOn() {
+        return rollersOn;
     }
 
 }

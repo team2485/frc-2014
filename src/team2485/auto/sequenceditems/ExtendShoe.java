@@ -14,6 +14,9 @@ public class ExtendShoe implements SequencedItem {
     }
 
     public double duration() {
-        return SequencerFactory.RETRACT_EXTEND_TIME; 
+       if(Robot.errorInAutonomous)
+            return 0;
+       
+        return SequencerFactory.RETRACT_EXTEND_TIME;
     }
 }

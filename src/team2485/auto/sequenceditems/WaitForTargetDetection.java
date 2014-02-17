@@ -8,16 +8,18 @@ import team2485.comp.TargetTracker;
  * Wait for the {@code TargetTracker} to detect targets.
  * @author Bryce Matsumori
  */
-public class WaitForTargets implements SequencedItem {
+public class WaitForTargetDetection implements SequencedItem {
     private boolean found = false;
 
     public void run() {
         found = Robot.tracker.isConnected() && Robot.tracker.getTrackState() != TargetTracker.TRACK_NONE;
 
         if (found) Robot.tracker.setAutoTrackState();
+
+        System.out.println("found in wait for target detection = " + found + " tracker auto state " + Robot.tracker.getAutoTrackState());
     }
 
     public double duration() {
-        return found ? 0.0 : 3.0; // maximum seconds before timing out
+        return found ? 0.0 : 1.0; // maximum seconds before timing out
     }
 }

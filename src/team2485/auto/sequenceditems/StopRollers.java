@@ -17,6 +17,9 @@ public class StopRollers implements SequencedItem {
     }
 
     public double duration() {
+        if(Robot.errorInAutonomous)
+            return 0;
+        
         return hasRun ? 0 : Integer.MAX_VALUE;
     }
 

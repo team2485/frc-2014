@@ -14,6 +14,9 @@ public class RetractShoe implements SequencedItem {
     }
 
     public double duration() {
+        if(Robot.errorInAutonomous)
+            return 0;
+
         return SequencerFactory.RETRACT_EXTEND_TIME;
     }
 }

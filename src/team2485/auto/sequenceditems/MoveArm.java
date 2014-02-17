@@ -11,16 +11,25 @@ public class MoveArm implements SequencedItem {
 
     double setpoint;
     boolean done = false;
+    boolean rollersOn = true;
 
     public MoveArm(double setpoint) {
         this.setpoint = setpoint;
     }
 
+    public MoveArm(double setpoint, boolean rollersOn) {
+        this.setpoint = setpoint;
+        this.rollersOn = rollersOn;
+    }
+
     public void run() {
-        done = Robot.arm.setSetpoint(setpoint);
+        done = Robot.arm.setSetpoint(setpoint, rollersOn);
     }
 
     public double duration() {
+        if(Robot.errorInAutonomous)
+            return 0;
+
         return done ? 0 : Integer.MAX_VALUE;
     }
 }

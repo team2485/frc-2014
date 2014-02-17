@@ -3,16 +3,15 @@ package team2485.auto.sequenceditems;
 import team2485.Robot;
 import team2485.auto.SequencedItem;
 import team2485.auto.SequencerFactory;
-import team2485.comp.Catapult;
 
 /**
  *
- * @author Marty
+ * @author W.A.R.Lords
  */
-public class RetractBoot implements SequencedItem {
+public class ExtendRightSidePiston implements SequencedItem {
 
     public void run() {
-        Robot.catapult.retractBoot();
+        Robot.catapult.extendRightPiston();
     }
 
     public double duration() {
@@ -21,4 +20,5 @@ public class RetractBoot implements SequencedItem {
 
         return SequencerFactory.RETRACT_EXTEND_TIME;
     }
+
 }
