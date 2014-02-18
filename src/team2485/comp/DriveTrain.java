@@ -29,7 +29,8 @@ public class DriveTrain {
     private PIDController imuPID;
     private PIDController encPID;
     public static double
-            kP_G_Rotate = 0.033,
+//            kP_G_Rotate = 0.033,
+            kP_G_Rotate = 0.04,
             kI_G_Rotate = 0.0,
             kD_G_Rotate = 0.0;
     public static double kP_G_Drive, kI_G_Drive, kD_G_Drive;
@@ -135,13 +136,13 @@ public class DriveTrain {
     public boolean rotateTo(double degrees) {
         if (!imuPID.isEnable()) {
             imuPID.enable();
-            double setpoint = degrees + imu.getYaw();
-            if (setpoint > 180)
-                setpoint -= 360;
-            else if (setpoint < -180)
-                setpoint += 360;
+//            double setpoint = degrees + imu.getYaw();
+//            if (setpoint > 180)
+//                setpoint -= 360;
+//            else if (setpoint < -180)
+//                setpoint += 360;
 
-            imuPID.setSetpoint(setpoint);
+            imuPID.setSetpoint(degrees);
         }
         if (imuPID.getP() != kP_G_Rotate ||
                 imuPID.getI() != kI_G_Rotate ||
@@ -175,7 +176,8 @@ public class DriveTrain {
      * @return when finished
      */
     public boolean rotateToZero() {
-        return rotateTo(-imu.getYaw());
+//        return rotateTo(-imu.getYaw());
+        return rotateTo(0);
     }
 
     /**

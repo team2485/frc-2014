@@ -19,12 +19,12 @@ public class IntakeArm {
     private static int potSlippage = 10;
     private boolean rollersOn = false;
 
-    // TODO: Tune the PID Constants
     public static double
             kP = 0.01,
             kI = 0,
             kD = 0;
 
+    private double potValue;
     private boolean isPID = false;
 
     // TODO: Find these setpoints
@@ -32,7 +32,8 @@ public class IntakeArm {
             IN_CATAPULT      = 3000 + potSlippage,
             UP_POSITION      = 2390 + potSlippage,
             PICKUP           = 2800 + potSlippage,
-            POPPER_POSITION  = 2017 + potSlippage;
+            POPPER_POSITION  = 2017 + potSlippage,
+            LOW_LIMIT        = 1951 + potSlippage;
 
     private double currentSetpoint = UP_POSITION;
     public static double ROLLERS_FORWARD = -1.0, ROLLERS_REVERSE = ROLLERS_FORWARD *= -1;
@@ -68,13 +69,12 @@ public class IntakeArm {
         this(new Talon(rollerMotorChannel), new Talon(armMotorChannel), new AnalogPotentiometer(potChannel));
     }
 
-    public void toggleRollers() {
-        if (rollersOn)
-            startRollers(ROLLERS_FORWARD);
-        else
-            stopRollers();
-        rollersOn = !rollersOn;
-    }
+//    public void toggleRollers() {
+//        if (rollersOn)
+//            startRollers(ROLLERS_FORWARD);
+//        else
+//            stopRollers();
+//    }
 
     /**
      * Starts rollers on intake arm
@@ -82,6 +82,7 @@ public class IntakeArm {
      */
     public void startRollers(double value) {
         rollerMotors.set(value);
+        rollersOn = !rollersOn;
     }
 
     /**
@@ -89,6 +90,7 @@ public class IntakeArm {
      */
     public void stopRollers() {
         rollerMotors.set(0);
+        rollersOn = !rollersOn;
     }
 
     public double getPotValue() {
@@ -136,8 +138,7 @@ public class IntakeArm {
             armPID.disable();
 
         if (currentSetpoint == PICKUP && rollersOn) {
-            startRollers(ROLLERS_FORWARD);
-            Robot.catapult.setIntakePosition();
+            startRollers(1.0);
         }
 
         return armPID.onTarget();
@@ -152,8 +153,15 @@ public class IntakeArm {
         if (Math.abs(speed) > 0.5) {
             armPID.disable();
             currentSetpoint = armPID.getSetpoint();
-            // TODO: Find the speeds we want for manual arm movement
-            armMotors.set(speed);
+            isPID = false;
+
+            // TODO: implement stop
+            if ((speed > 0 && potValue > IN_CATAPULT - 100) || (speed < 0 && potValue < LOW_LIMIT))
+                armMotors.set(0.0);
+            else {
+                // TODO: Find the speeds we want for manual arm movement
+                armMotors.set(speed);
+            }
         } else if (!armPID.isEnable()) {
             armMotors.set(0.0);
         }
@@ -164,7 +172,16 @@ public class IntakeArm {
      * the right PID gains are being used
      */
     public void run() {
-        double potValue = pot.get();
+        potValue = pot.get();
+
+//        if (armPID.getSetpoint() == IN_CATAPULT && potValue > IN_CATAPULT - 50)
+//            if (rollersOn)
+//                stopRollers();
+
+        if (armPID.getSetpoint() == IN_CATAPULT && potValue > IN_CATAPULT - 100) {
+            stopRollers();
+            Robot.catapult.extendShoe();
+        }
 
         System.out.println("pot val " + potValue);
 
@@ -176,28 +193,6 @@ public class IntakeArm {
                 isPID = false;
             }
         }
-
-
-        // TODO: Find what values to keep the rollers on for
-//        if (50 > potValue && 400 < potValue)
-//            startRollers(1.0);
-//        else
-//            stopRollers();
-
-        // TODO: Find what 50 should be...
-//        if (armPID.getSetpoint() < 2000 || potValue < 2000) {
-//            currentSetpoint = 2000;
-//            armPID.setSetpoint(currentSetpoint);
-//            armPID.enable();
-//            setPID(kP, kI, kD);
-//        } else if (potValue > 3000) {
-//            currentSetpoint = 3000;
-//            armPID.setSetpoint(currentSetpoint);
-//            armPID.enable();
-//            setPID(kP, kI, kD);
-//        }
-
-
     }
 
     /**

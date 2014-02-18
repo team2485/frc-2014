@@ -16,7 +16,6 @@ public class TurnToZero implements SequencedItem {
     }
 
     public double duration() {
-        // TODO: Find correct time
-        return completed ? 0.0 : 5.0;
+        return completed ? 0.0 : 1.0;
     }
 }

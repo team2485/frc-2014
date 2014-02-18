@@ -9,14 +9,23 @@ import team2485.auto.SequencerFactory;
  * @author Marty
  */
 public class ExtendShoe implements SequencedItem {
+
+    private boolean initialCheck = true;
+    private double duration;
+
     public void run() {
-        Robot.catapult.setShootingPosition();
+        if (initialCheck) {
+            duration = Robot.catapult.shoeExtended() ? 0 : SequencerFactory.RETRACT_EXTEND_TIME;
+            initialCheck = false;
+        }
+
+        Robot.catapult.extendShoe();
     }
 
     public double duration() {
        if(Robot.errorInAutonomous)
             return 0;
-       
-        return SequencerFactory.RETRACT_EXTEND_TIME;
+
+        return duration;
     }
 }

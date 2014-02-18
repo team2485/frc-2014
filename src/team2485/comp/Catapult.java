@@ -118,15 +118,15 @@ public class Catapult {
     /**
      * Puts the shoe piston into the intake position
      */
-    public void setIntakePosition() {
-        solenoidShoeAdjuster.set(false);
+    public void extendShoe() {
+        solenoidShoeAdjuster.set(true);
     }
 
     /**
      * Puts the shoe piston into the shooting position
      */
-    public void setShootingPosition() {
-        solenoidShoeAdjuster.set(true);
+    public void retractShoe() {
+        solenoidShoeAdjuster.set(false);
     }
 
     /**
@@ -144,9 +144,14 @@ public class Catapult {
     }
 
     public boolean inCatapult() {
-        if(sonic.getValue() < 25)
+        System.out.println("Sonic value " + sonic.getValue());
+        if(sonic.getValue() < 50)
             return true;
         else
             return false;
+    }
+
+    public boolean shoeExtended() {
+        return solenoidShoeAdjuster.get();
     }
 }

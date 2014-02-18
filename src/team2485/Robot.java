@@ -35,6 +35,7 @@ public class Robot extends IterativeRobot {
     public int potArmSmart; // Variable for the smartdashboard output for the potentiometer value and the rollers
     public int talArmSmart; // Variable for the smartdashboard output for whether the motor is running
 
+
     private NetworkTable pid;
 
     private Sequencer autoSequence;
@@ -43,19 +44,21 @@ public class Robot extends IterativeRobot {
     private Compressor compressor;
 
     private Relay ringLightRelay;
+    private LightController lightController;
 
     public void robotInit() {
         leftEncoder  = new Encoder(13, 14);
-        rightEncoder = new Encoder(15, 16);
+        rightEncoder = new Encoder(12, 11);
 
         drive             = new DriveTrain(new Talon(10), new Talon(8), leftEncoder, new Solenoid(5));
         catapult          = new Catapult(1, 2, 3, 6, 7, new AnalogChannel(2));
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(1, 1000));
         locator           = new Locator(leftEncoder, rightEncoder, drive);
+        lightController   = new LightController(new Relay(3), new Relay(4), new Relay(5), new Relay(6), new Relay(7)); // white red black black red
         errorInAutonomous = false;
 
         try {
-        imu = new IMUAdvanced(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
+            imu = new IMUAdvanced(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
             drive.setImu(imu);
         } catch (VisaException ex) {
             new Thread(new Runnable() {
@@ -92,8 +95,8 @@ public class Robot extends IterativeRobot {
 //        int autonomousType = (int) SmartDashboard.getNumber("autoType", SequencerFactory.ONE_BALL);
 //        autoSequence = SequencerFactory.createAuto(autonomousType);
         tracker.resetAutoTrackState();
-
-        int autonomousType = 3;
+        autoSequence = SequencerFactory.createAuto(SequencerFactory.NONE);
+        autoSequence.reset();
         autoSequence = SequencerFactory.createAuto(SequencerFactory.THREE_BALL);
 
         drive.resetSensors();
@@ -119,10 +122,12 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
         autoSequence.run();
         globalPeriodic();
+
+        lightController.send(LightController.HAPPY_RAINBOW);
     }
 
     public void teleopInit() {
-        ringLightRelay.set(Relay.Value.kForward);
+        ringLightRelay.set(Relay.Value.kReverse);
         errorInAutonomous = false;
 
 //        ringLightRelay.set(Relay.Value.kReverse);
@@ -135,7 +140,6 @@ public class Robot extends IterativeRobot {
 
         //<editor-fold defaultstate="collapsed" desc="Driver Controls">
         // --- START DRIVER CONTROLS --- //
-        // TODO: Figure out threshold values
         drive.warlordDrive(
                 Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f),
                 Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f));
@@ -160,8 +164,10 @@ public class Robot extends IterativeRobot {
         }
 
         // Driver pickup controls
-        if (Controllers.getButton(Controllers.XBOX_BTN_X))
+        if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
             arm.setSetpoint(IntakeArm.PICKUP);
+            lightController.send(LightController.GOLD_CHASE);
+        }
 
         // --- END DRIVER CONTROLS --- //
         //</editor-fold>
@@ -170,38 +176,62 @@ public class Robot extends IterativeRobot {
         // --- START OPERATOR CONTROL --- //
         // Shooting controls
         if (Controllers.getJoystickButton(12)) {
-            if (Controllers.getJoystickButton(1))
+            if (Controllers.getJoystickButton(1)) {
                 catapult.shoot(SequencerFactory.TARGET_SHOT);
-            else if (Controllers.getJoystickButton(2))
+                lightController.send(LightController.RAINBOW_CHASE);
+            } else if (Controllers.getJoystickButton(2)) {
                 catapult.shoot(SequencerFactory.TRUSS_SHOT);
-            else if (Controllers.getJoystickButton(3))
+                lightController.send(LightController.RAINBOW_CHASE);
+            } else if (Controllers.getJoystickButton(3)) {
                 catapult.shoot(SequencerFactory.BOOT);
-            else if (Controllers.getJoystickButton(5))
+                lightController.send(LightController.RAINBOW_CHASE);
+            } else if (Controllers.getJoystickButton(5)) {
                 catapult.shoot(SequencerFactory.FORWARD_PASS);
-            else if (Controllers.getJoystickButton(7))
+                lightController.send(LightController.RAINBOW_CHASE);
+            } else if (Controllers.getJoystickButton(7)) {
                 catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
+                lightController.send(LightController.RAINBOW_CHASE);
+            }
         }
 
         if (!prevJoystick11 && Controllers.getJoystickButton(11))
             catapult.toggleShoe();
         prevJoystick11 = Controllers.getJoystickButton(11);
 
-
         // Arm position controls
-        if (Controllers.getJoystickButton(4))
+        if (Controllers.getJoystickButton(4)) {
             arm.setSetpoint(IntakeArm.IN_CATAPULT);
-        else if (Controllers.getJoystickButton(6))
-            arm.setSetpoint(IntakeArm.PICKUP);
-        else if (Controllers.getJoystickButton(9))
+            lightController.send(LightController.RAINBOW_CYCLE);
+        } else if (Controllers.getJoystickButton(6))
             arm.setSetpoint(IntakeArm.UP_POSITION);
+        else if (Controllers.getJoystickButton(9)) {
+            arm.setSetpoint(IntakeArm.PICKUP);
+            lightController.send(LightController.GOLD_CHASE);
+        }
 
         else if (!prevJoystick8 && Controllers.getJoystickButton(8))
-            arm.toggleRollers();
+            arm.stopRollers();
         prevJoystick8 = Controllers.getJoystickButton(8);
 
-        arm.moveArm(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
+        arm.moveArm(-Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
         // --- END OPERATOR CONTROL --- //
         //</editor-fold>
+
+        switch ((int) DriverStation.getInstance().getMatchTime()) {
+            case 45:
+                lightController.send(LightController.GOLD);
+                break;
+            case 75:
+                lightController.send(LightController.GREEN);
+                break;
+            case 105:
+                lightController.send(LightController.BLUE);
+                break;
+            case 135:
+                lightController.send(LightController.RED);
+                break;
+        }
+
 
         // Arm updates
         arm.run();
@@ -226,8 +256,11 @@ public class Robot extends IterativeRobot {
         }
         potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
         SmartDashboard.putNumber("ArmPot " , potArmSmart);
+
+        locator.run();
         SmartDashboard.putNumber("locatorx", locator.getX());
         SmartDashboard.putNumber("locatory", locator.getY());
+        SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + ",false");
 
         // DS info
         SmartDashboard.putNumber("battery", DriverStation.getInstance().getBatteryVoltage());

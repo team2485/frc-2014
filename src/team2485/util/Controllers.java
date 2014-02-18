@@ -291,7 +291,7 @@ public final class Controllers {
 
     /**
      * Gets the current value of the specified button on the secondary controller.
-     * @param button  a button 1-12
+     * @param button  a button 1-22
      * @return the button value as a boolean
      *
      * @throws ControllerNullException   if the secondary controller has not been set
@@ -302,7 +302,7 @@ public final class Controllers {
     public static boolean getJoystickButton(int button) {
         if (secondary == null)
             throw new ControllerNullException("Secondary controller is null");
-        if (button < 1 || button > 12)
+        if (button < 1 || button > 22)
             throw new IllegalArgumentException("Joystick button number (" + button + ") is invalid.");
 
         return secondary.getRawButton(button);

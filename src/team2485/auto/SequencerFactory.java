@@ -212,52 +212,57 @@ public class SequencerFactory {
                     new SequencedItemArray(new SequencedItem[] {
                         new WaitForTargetDetection(),
                         new MoveArm(IntakeArm.PICKUP, false) }),
-                    new TurnToTarget(),
-                    new ExtendShoe(),
+                    new SequencedItemArray(new SequencedItem[] {
+                        new TurnToTarget(),
+                        new ExtendShoe()}),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                     new BallHasLeft(),
-                    new TurnToZero(),
                     new SequencedItemArray(new SequencedItem[] {
-                        new Drive(-10),
+                        new TurnToZero(),
+                        new RetractShoe()}),
+                    new SequencedItemArray(new SequencedItem[] {
+                        new Drive(-20),
                         new MoveArm(IntakeArm.PICKUP)}),
                     new BallIsSettled(),
                     new SequencedItemArray(new SequencedItem[] {
                         new MoveArm(IntakeArm.IN_CATAPULT),
                         new StopRollers(),
-                        new TurnToOtherTarget(),
-                        new ExtendShoe(),
-                        new SequencedItemArray(new SequencedItem[] {
+                    }),
+                    new TurnToOtherTarget(),
+                    new ExtendShoe(),
+                    new SequencedItemArray(new SequencedItem[] {
                             new Drive(45),
-                            new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))})}),
+                            new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))})
                  });
 
             case THREE_BALL:
                 return new Sequencer(new SequencedItem[] {
-                new ExtendShoe(),
-                new SequencedItemArray(new SequencedItem[] {
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                    new MoveArm(IntakeArm.PICKUP)}),
-                new BallHasLeft(),
-                new Drive(-10),
-                new BallIsSettled(),
-                new ExtendShoe(),
-                new SequencedItemArray(new SequencedItem[] {
-                    new MoveArm(IntakeArm.IN_CATAPULT),
-                    new StopRollers(),
+                    new ExtendShoe(),
                     new SequencedItemArray(new SequencedItem[] {
-                        new Drive(0),
-                        new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))})}),
-                new BallHasLeft(),
-                new MoveArm(IntakeArm.PICKUP),
-                new Drive(-30),
-                new BallIsSettled(),
-                new ExtendShoe(),
-                new SequencedItemArray(new SequencedItem[] {
+                        new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
+                        new MoveArm(IntakeArm.PICKUP, false)}),
+                    new BallHasLeft(),
+                    new MoveArm(IntakeArm.PICKUP),
+                    new Drive(-10),
+                    new BallIsSettled(),
+                    new ExtendShoe(),
+                    new SequencedItemArray(new SequencedItem[] {
                         new MoveArm(IntakeArm.IN_CATAPULT),
                         new StopRollers(),
                         new SequencedItemArray(new SequencedItem[] {
-                                new Drive(45),
-                                new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))})})
+                            new Drive(0),
+                            new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))})}),
+                    new BallHasLeft(),
+                    new MoveArm(IntakeArm.PICKUP),
+                    new Drive(-30),
+                    new BallIsSettled(),
+                    new ExtendShoe(),
+                    new SequencedItemArray(new SequencedItem[] {
+                            new MoveArm(IntakeArm.IN_CATAPULT),
+                            new StopRollers(),
+                            new SequencedItemArray(new SequencedItem[] {
+                                    new Drive(45),
+                                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))})})
                 });
 
             default: return new Sequencer(); // return an empty sequence
@@ -300,6 +305,7 @@ public class SequencerFactory {
 
             case TARGET_SHOT:
                 return new Sequencer(new SequencedItem[] {
+                    new ExtendShoe(),
                     new ExtendThreePistons(),
                     new RetractShooter(),
                     new RetractShoe()
@@ -313,6 +319,7 @@ public class SequencerFactory {
 
             case FORWARD_PASS:
                 return new Sequencer(new SequencedItem[] {
+                    new ExtendShoe(),
                     new ExtendRightSidePiston(),
                     new RetractShooter(),
                     new RetractShoe()
