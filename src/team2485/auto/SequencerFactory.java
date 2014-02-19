@@ -96,10 +96,10 @@ public class SequencerFactory {
                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
                    new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                        new Drive(45)}),
                    new WaitForHot(WaitForHot.LEFT),
-                   new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                   new Drive(45)
+                   new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT))
                 });
 
             // Aligned on right side
@@ -108,10 +108,10 @@ public class SequencerFactory {
                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
                    new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                    new WaitForHot(WaitForHot.RIGHT),
                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                   new Drive(45)
                 });
 
             // Aligned on left side
@@ -120,10 +120,10 @@ public class SequencerFactory {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                     new WaitForHot(WaitForHot.LEFT),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                    new Drive(45),
                     new Drive(-63)
                 });
 
@@ -133,10 +133,10 @@ public class SequencerFactory {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                     new WaitForHot(WaitForHot.RIGHT),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                    new Drive(45),
                     new Drive(-63)
                 });
 
@@ -146,10 +146,10 @@ public class SequencerFactory {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                     new WaitForHot(WaitForHot.LEFT),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                    new Drive(45),
                     new Rotate(-30),
                     new Drive(-108)
                 });
@@ -159,10 +159,10 @@ public class SequencerFactory {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                     new WaitForHot(WaitForHot.RIGHT),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                    new Drive(45),
                     new Rotate(30),
                     new Drive(-108)
                 });
@@ -172,12 +172,12 @@ public class SequencerFactory {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                     new WaitForHot(WaitForHot.LEFT),
                     new Rotate(-10),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                     new TurnToZero(),
-                    new Drive(45)
                 });
 
             case ONE_BALL_ANGLED_SHOT_RIGHT:
@@ -185,12 +185,12 @@ public class SequencerFactory {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedItemArray(new SequencedItem[] {
                        new ExtendShoe(),
-                       new WaitForTargetDetection()}),
+                       new WaitForTargetDetection(),
+                       new Drive(45)}),
                     new WaitForHot(WaitForHot.RIGHT),
                     new Rotate(15),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                     new TurnToZero(),
-                    new Drive(45)
                 });
 
             case ONE_BALL_CUSTOM_LEFT:

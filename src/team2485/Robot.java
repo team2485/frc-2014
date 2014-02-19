@@ -28,13 +28,12 @@ public class Robot extends IterativeRobot {
     public static IntakeArm arm;
     public static TargetTracker tracker;
     public static IMUAdvanced imu;
-    private final static byte IMU_UPDATE_RATE = 50;
+    private final static byte IMU_UPDATE_RATE = 30;
     public static Encoder leftEncoder, rightEncoder;
     public static Locator locator;
     public static boolean errorInAutonomous;
     public int potArmSmart; // Variable for the smartdashboard output for the potentiometer value and the rollers
     public int talArmSmart; // Variable for the smartdashboard output for whether the motor is running
-
 
     private NetworkTable pid;
 
@@ -45,6 +44,7 @@ public class Robot extends IterativeRobot {
 
     private Relay ringLightRelay;
     private LightController lightController;
+    private AnalogChannel pressureTransducer;
 
     public void robotInit() {
         leftEncoder  = new Encoder(13, 14);
@@ -54,8 +54,9 @@ public class Robot extends IterativeRobot {
         catapult          = new Catapult(1, 2, 3, 6, 7, new AnalogChannel(2));
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(1, 1000));
         locator           = new Locator(leftEncoder, rightEncoder, drive);
-        lightController   = new LightController(new Relay(3), new Relay(4), new Relay(5), new Relay(6), new Relay(7)); // white red black black red
         errorInAutonomous = false;
+        lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
+
 
         try {
             imu = new IMUAdvanced(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
@@ -86,6 +87,7 @@ public class Robot extends IterativeRobot {
         compressor = new Compressor(1, 1);
         ringLightRelay = new Relay(8);
         tracker    = new TargetTracker();
+        pressureTransducer = new AnalogChannel(3);
 
         Controllers.set(new Joystick(1), new Joystick(2));
     }
@@ -127,7 +129,7 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
-        ringLightRelay.set(Relay.Value.kReverse);
+//        ringLightRelay.set(Relay.Value.kReverse);
         errorInAutonomous = false;
 
 //        ringLightRelay.set(Relay.Value.kReverse);
@@ -166,7 +168,7 @@ public class Robot extends IterativeRobot {
         // Driver pickup controls
         if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
             arm.setSetpoint(IntakeArm.PICKUP);
-            lightController.send(LightController.GOLD_CHASE);
+            lightController.send(LightController.INTAKE);
         }
 
         // --- END DRIVER CONTROLS --- //
@@ -193,9 +195,19 @@ public class Robot extends IterativeRobot {
                 lightController.send(LightController.RAINBOW_CHASE);
             }
         }
+//
+//        if (!prevJoystick11 && Controllers.getJoystickButton(11))
+//            catapult.toggleShoe();
 
-        if (!prevJoystick11 && Controllers.getJoystickButton(11))
-            catapult.toggleShoe();
+        if (Controllers.getJoystickButton(7)) {
+            catapult.extendShoe();
+        } if (Controllers.getJoystickButton(11))
+            catapult.retractShoe();
+
+
+//        if (Controllers.getJoystickButton(11))
+//            catapult.extendShoe();
+
         prevJoystick11 = Controllers.getJoystickButton(11);
 
         // Arm position controls
@@ -237,6 +249,7 @@ public class Robot extends IterativeRobot {
         arm.run();
         catapult.run();
         globalPeriodic();
+        lightController.send(LightController.INTAKE);
     }
 
     public void testPeriodic() {
@@ -262,8 +275,12 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("locatory", locator.getY());
         SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + ",false");
 
+        SmartDashboard.putNumber("pressure", pressureTransducer.getVoltage());
+
         // DS info
         SmartDashboard.putNumber("battery", DriverStation.getInstance().getBatteryVoltage());
         SmartDashboard.putNumber("matchtime", DriverStation.getInstance().getMatchTime());
+        SmartDashboard.putBoolean("disabled", DriverStation.getInstance().isDisabled());
+        SmartDashboard.putNumber("mode", DriverStation.getInstance().isAutonomous() ? 1 : DriverStation.getInstance().isOperatorControl() ? 2 : 3);
     }
 }

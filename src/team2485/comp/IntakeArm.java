@@ -16,7 +16,7 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static int potSlippage = 10;
+    private static int potSlippage = -50;
     private boolean rollersOn = false;
 
     public static double
@@ -82,7 +82,7 @@ public class IntakeArm {
      */
     public void startRollers(double value) {
         rollerMotors.set(value);
-        rollersOn = !rollersOn;
+        rollersOn = true;
     }
 
     /**
@@ -90,7 +90,7 @@ public class IntakeArm {
      */
     public void stopRollers() {
         rollerMotors.set(0);
-        rollersOn = !rollersOn;
+        rollersOn = false;
     }
 
     public double getPotValue() {

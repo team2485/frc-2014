@@ -6,19 +6,21 @@ public class LightController {
     private final Relay r1, r2, r3, r4, r5;
 
     public static final int
-            BLACK          = 0,
-            GREEN          = 1,
-            GOLD           = 2,
-            RED            = 3,
-            BLUE           = 4,
-            GOLD_ALT       = 5,
-            WHITE_ALT      = 6,
-            HAPPY_RAINBOW  = 7,
+            RAINBOW_CYCLE          = 0,
+            BLACK          = 1,
+            GREEN           = 2,
+            GOLD            = 3,
+            RED           = 4,
+            BLUE       = 5,
+            GOLD_ALT      = 6,
+            WHITE_ALT  = 7,
             GOLD_CHASE     = 8,
             GOLD_BLINK     = 9,
-            RAINBOW_CHASE  = 10,
-            GOLD_PING_PONG = 11,
-            RAINBOW_CYCLE  = 12;
+            GOLD_PING_PONG  = 10,
+            HAPPY_RAINBOW = 11,
+            RAINBOW_CHASE  = 12,
+            RAINBOW_CYCLE_FAST = 13,
+            INTAKE = 14;
 
     public LightController(Relay r1, Relay r2, Relay r3, Relay r4, Relay r5) {
         this.r1 = r1;

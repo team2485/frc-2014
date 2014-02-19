@@ -17,7 +17,7 @@ public class DriveTrain {
 
     // TODO: Find the speed ratings
     private final double
-            NORMAL_SPEED_RATING = 0.7,
+            NORMAL_SPEED_RATING = 1.0,
             FAST_SPEED_RATING = 1.0,
             SLOW_SPEED_RATING = 0.6;
 
