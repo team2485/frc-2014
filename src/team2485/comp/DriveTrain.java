@@ -1,6 +1,6 @@
 package team2485.comp;
 
-import com.kauailabs.nav6.frc.IMUAdvanced;
+import com.kauailabs.nav6.frc.IMU;
 import edu.wpi.first.wpilibj.*;
 import team2485.util.*;
 
@@ -57,7 +57,7 @@ public class DriveTrain {
     private final double sensitivityLow = 0.75;
     private boolean isQuickTurn = false;
     // --- END DRIVE STUFF --- //
-    private IMUAdvanced imu;
+    private IMU imu;
 
     /**
      * Default Constructor
@@ -69,7 +69,7 @@ public class DriveTrain {
      * @param gearShifter1
      * @param gearShifter2
      */
-    public DriveTrain(Talon leftDrive, Talon rightDrive, IMUAdvanced imu, Encoder encoder, Solenoid gearShifter) {
+    public DriveTrain(Talon leftDrive, Talon rightDrive, IMU imu, Encoder encoder, Solenoid gearShifter) {
         this.leftDrive      = leftDrive;
         this.rightDrive     = rightDrive;
         this.imu            = imu;
@@ -118,7 +118,7 @@ public class DriveTrain {
         this(new Talon(leftDrivePort), new Talon(rightDrivePort), new Encoder(encoderPortA, encoderPortB), new Solenoid(gearShifterPort));
     }
 
-    public void setImu(IMUAdvanced imu) {
+    public void setImu(IMU imu) {
         this.imu = imu;
 
         dummyImuOutput = new DummyOutput();

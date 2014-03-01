@@ -1,10 +1,12 @@
 package team2485.util;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import java.util.Hashtable;
 
 /**
- * Assists in obtaining values accurately from controls.
- * NOTE: controller pointers must be configured before use using
+ * This utility class assists in obtaining values accurately from operator controls.
+ * Controller pointers must be configured before use using
  * {@code Controllers.set(primary, secondary)}.
  *
  * @author Bryce Matsumori
@@ -306,6 +308,55 @@ public final class Controllers {
             throw new IllegalArgumentException("Joystick button number (" + button + ") is invalid.");
 
         return secondary.getRawButton(button);
+    }
+
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="G13 Input">
+
+    public static final int
+            G13_BTN_LCLICK = 23,
+            G13_BTN_RCLICK = 24;
+
+    private static final NetworkTable g13Table = NetworkTable.getTable("G13");
+
+    private static final Hashtable g13ToJoyMap = new Hashtable();
+    static {
+        g13ToJoyMap.put(new Integer(7),  new Integer(8));  // rollers off
+//        g13ToJoyMap.put(new Integer(6),  new Integer(-1)); // rollers on - not on joystick as of now
+        g13ToJoyMap.put(new Integer(14), new Integer(7));  // extend shoe
+        g13ToJoyMap.put(new Integer(13), new Integer(11)); // retract shoe
+        g13ToJoyMap.put(new Integer(24), new Integer(12)); // safety
+        g13ToJoyMap.put(new Integer(4),  new Integer(7));  // power shot
+    }
+
+    /**
+     * Reads G13 button input from the SmartDashboard.
+     * @param button The button index.
+     * @return The button state.
+     */
+    public static boolean getG13Button(int button) {
+        if (button < 1 || button > 24)
+            throw new IllegalArgumentException("G13 button G" + button + " is invalid.");
+
+        return g13Table.getBoolean(Integer.toString(button), false);
+    }
+
+    /**
+     * Whether to use the G13 (true) for input or the joystick (false) for input.
+     */
+    public static boolean USE_G13 = true;
+
+    /**
+     * Reads either G13 or joystick button input, based on {@code USE_G13}.
+     * This can be used to switch between using the G13 and joystick with a single bool.
+     * The G13 -> joystick mappings are stored in {@code g13ToJoyMap} in {@code Controllers}.
+     * @param button The G13 button index.
+     * @return The button state.
+     */
+    public static boolean getG13OrJoyButton(int button) {
+        if (USE_G13) return getG13Button(button);
+        else return getJoystickButton(((Integer)g13ToJoyMap.get(new Integer(button))).intValue());
     }
 
     // </editor-fold>

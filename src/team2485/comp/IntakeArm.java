@@ -156,9 +156,9 @@ public class IntakeArm {
             isPID = false;
 
             // TODO: implement stop
-            if ((speed > 0 && potValue > IN_CATAPULT - 100) || (speed < 0 && potValue < LOW_LIMIT))
+            if ((speed > 0 && potValue > IN_CATAPULT - 100) || (speed < 0 && potValue < LOW_LIMIT)) {
                 armMotors.set(0.0);
-            else {
+            } else {
                 // TODO: Find the speeds we want for manual arm movement
                 armMotors.set(speed);
             }

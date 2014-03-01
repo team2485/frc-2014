@@ -17,11 +17,11 @@ public class SequencerFactory {
     public static final int
             // Autonomous options
             // just move forward
-            NONE                                 = 0,
+            FORWARD                              = 0,
             // move forward and back to truss
-            NONE_TRUSS                           = 1,
+            FORWARD_TRUSS                        = 1,
             // specifying distance
-            NONE_CUSTOM                          = 2,
+            FORWARD_CUSTOM                       = 2,
             // if hot, shoot, not - wait to shoot, move forward, stay, start on left
             ONE_BALL_LEFT                        = 3,
             // if hot, shoot, not - wait to shoot, move forward, stay, start on right
@@ -31,9 +31,9 @@ public class SequencerFactory {
             // if hot, shoot, not - wait to shoot, move forward, move to truss, rotate 180, stay, start on right
             ONE_BALL_TRUSS_RIGHT                 = 6,
             // if hot, shoot, not - wait to shoot, move forward, on one side, angle to the center, move diagonally back
-            ONE_BALL_FROM_LEFT_TO_CENTER_TRUSS          = 7,
+            ONE_BALL_FROM_LEFT_TO_CENTER_TRUSS   = 7,
             // same as before, but other side version
-            ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS         = 8,
+            ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS  = 8,
             // if hot, shoot, not - wait to shoot, but use angled shot left
             ONE_BALL_ANGLED_SHOT_LEFT            = 9,
             // if hot, shoot, not - wait to shoot, but use angled shot right
@@ -70,20 +70,20 @@ public class SequencerFactory {
 
         switch (type) {
             // Starting position from anywhere on the field
-            case NONE:
+            case FORWARD:
                 return new Sequencer(new SequencedItem[] {
                     new Drive(45)
                 });
 
             // Anywhere on the field
-            case NONE_TRUSS:
+            case FORWARD_TRUSS:
                 return new Sequencer(new SequencedItem[] {
                     new Drive(45),
                     new Drive(-153)
                 });
 
             // Anywhere on the field
-            case NONE_CUSTOM:
+            case FORWARD_CUSTOM:
                 return new Sequencer(new SequencedItem[] {
                     new Drive(45),
                     // TODO: Get custom value from dashboard

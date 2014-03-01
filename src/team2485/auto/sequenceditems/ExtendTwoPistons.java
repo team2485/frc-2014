@@ -18,6 +18,6 @@ public class ExtendTwoPistons implements SequencedItem {
         if(Robot.errorInAutonomous)
             return 0;
 
-        return SequencerFactory.RETRACT_EXTEND_TIME;
+        return 0.4;
     }
 }

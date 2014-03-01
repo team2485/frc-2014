@@ -18,7 +18,7 @@ public class ExtendRightSidePiston implements SequencedItem {
         if(Robot.errorInAutonomous)
             return 0;
 
-        return SequencerFactory.RETRACT_EXTEND_TIME;
+        return 0.5;
     }
 
 }

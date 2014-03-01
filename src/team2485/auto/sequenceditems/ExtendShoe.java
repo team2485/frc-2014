@@ -15,7 +15,7 @@ public class ExtendShoe implements SequencedItem {
 
     public void run() {
         if (initialCheck) {
-            duration = Robot.catapult.shoeExtended() ? 0 : SequencerFactory.RETRACT_EXTEND_TIME;
+            duration = Robot.catapult.shoeExtended() ? 0 : 0.2;
             initialCheck = false;
         }
 

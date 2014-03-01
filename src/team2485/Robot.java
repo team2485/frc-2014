@@ -1,7 +1,7 @@
 package team2485;
 
 import com.kauailabs.nav6.frc.BufferingSerialPort;
-import com.kauailabs.nav6.frc.IMUAdvanced;
+import com.kauailabs.nav6.frc.IMU;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,13 +27,15 @@ public class Robot extends IterativeRobot {
     public static Catapult catapult;
     public static IntakeArm arm;
     public static TargetTracker tracker;
-    public static IMUAdvanced imu;
+    public static IMU imu;
     private final static byte IMU_UPDATE_RATE = 30;
     public static Encoder leftEncoder, rightEncoder;
     public static Locator locator;
     public static boolean errorInAutonomous;
     public int potArmSmart; // Variable for the smartdashboard output for the potentiometer value and the rollers
     public int talArmSmart; // Variable for the smartdashboard output for whether the motor is running
+
+    private static final boolean USE_G13 = true;
 
     private NetworkTable pid;
 
@@ -44,7 +46,7 @@ public class Robot extends IterativeRobot {
 
     private Relay ringLightRelay;
     private LightController lightController;
-    private AnalogChannel pressureTransducer;
+    private PressureTransducer pressureTransducer;
 
     public void robotInit() {
         leftEncoder  = new Encoder(13, 14);
@@ -59,7 +61,7 @@ public class Robot extends IterativeRobot {
 
 
         try {
-            imu = new IMUAdvanced(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
+            imu = new IMU(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
             drive.setImu(imu);
         } catch (VisaException ex) {
             new Thread(new Runnable() {
@@ -68,7 +70,7 @@ public class Robot extends IterativeRobot {
                     try {
                         for (int i = 0; i < 30 && imu == null; i++) {
                             try {
-                                imu = new IMUAdvanced(new BufferingSerialPort(57600));
+                                imu = new IMU(new BufferingSerialPort(57600));
                                 drive.setImu(imu);
                             } catch (VisaException ex) { }
 
@@ -87,17 +89,17 @@ public class Robot extends IterativeRobot {
         compressor = new Compressor(1, 1);
         ringLightRelay = new Relay(8);
         tracker    = new TargetTracker();
-        pressureTransducer = new AnalogChannel(3);
+        pressureTransducer = new PressureTransducer(3);
 
         Controllers.set(new Joystick(1), new Joystick(2));
     }
 
     public void autonomousInit() {
         ringLightRelay.set(Relay.Value.kReverse);
-//        int autonomousType = (int) SmartDashboard.getNumber("autoType", SequencerFactory.ONE_BALL);
+//        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.ONE_BALL);
 //        autoSequence = SequencerFactory.createAuto(autonomousType);
         tracker.resetAutoTrackState();
-        autoSequence = SequencerFactory.createAuto(SequencerFactory.NONE);
+        autoSequence = SequencerFactory.createAuto(SequencerFactory.FORWARD);
         autoSequence.reset();
         autoSequence = SequencerFactory.createAuto(SequencerFactory.THREE_BALL);
 
@@ -137,7 +139,7 @@ public class Robot extends IterativeRobot {
         arm.stopRollers();
     }
 
-    private boolean prevJoystick11 = false, prevJoystick8 = false;
+    private boolean prevOperatorBtn7 = false;
     public void teleopPeriodic() {
 
         //<editor-fold defaultstate="collapsed" desc="Driver Controls">
@@ -177,7 +179,7 @@ public class Robot extends IterativeRobot {
         //<editor-fold defaultstate="collapsed" desc="Operator Controls">
         // --- START OPERATOR CONTROL --- //
         // Shooting controls
-        if (Controllers.getJoystickButton(12)) {
+        if (Controllers.getG13OrJoyButton(24)) {
             if (Controllers.getJoystickButton(1)) {
                 catapult.shoot(SequencerFactory.TARGET_SHOT);
                 lightController.send(LightController.RAINBOW_CHASE);
@@ -190,25 +192,19 @@ public class Robot extends IterativeRobot {
             } else if (Controllers.getJoystickButton(5)) {
                 catapult.shoot(SequencerFactory.FORWARD_PASS);
                 lightController.send(LightController.RAINBOW_CHASE);
-            } else if (Controllers.getJoystickButton(7)) {
+            } else if (Controllers.getG13OrJoyButton(4)) {
                 catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
                 lightController.send(LightController.RAINBOW_CHASE);
             }
         }
-//
-//        if (!prevJoystick11 && Controllers.getJoystickButton(11))
+
+//        if (!prevJoystick11 && Controllers.getG13OrJoyButton(13))
 //            catapult.toggleShoe();
 
-        if (Controllers.getJoystickButton(7)) {
+        if (Controllers.getG13OrJoyButton(14))
             catapult.extendShoe();
-        } if (Controllers.getJoystickButton(11))
+        if (Controllers.getG13OrJoyButton(13))
             catapult.retractShoe();
-
-
-//        if (Controllers.getJoystickButton(11))
-//            catapult.extendShoe();
-
-        prevJoystick11 = Controllers.getJoystickButton(11);
 
         // Arm position controls
         if (Controllers.getJoystickButton(4)) {
@@ -221,9 +217,9 @@ public class Robot extends IterativeRobot {
             lightController.send(LightController.GOLD_CHASE);
         }
 
-        else if (!prevJoystick8 && Controllers.getJoystickButton(8))
+        else if (!prevOperatorBtn7 && Controllers.getG13OrJoyButton(7))
             arm.stopRollers();
-        prevJoystick8 = Controllers.getJoystickButton(8);
+        prevOperatorBtn7 = Controllers.getG13OrJoyButton(7);
 
         arm.moveArm(-Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
         // --- END OPERATOR CONTROL --- //
@@ -275,7 +271,7 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("locatory", locator.getY());
         SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + ",false");
 
-        SmartDashboard.putNumber("pressure", pressureTransducer.getVoltage());
+        SmartDashboard.putNumber("pressure", pressureTransducer.getPressure());
 
         // DS info
         SmartDashboard.putNumber("battery", DriverStation.getInstance().getBatteryVoltage());
