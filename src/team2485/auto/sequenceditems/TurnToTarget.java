@@ -15,10 +15,10 @@ public class TurnToTarget implements SequencedItem {
         completed = Robot.drive.rotateTo(
             Robot.tracker.getAutoTrackState() == TargetTracker.TRACK_LEFT ?
             -10 :
-             10); // TRACK_RIGHT or default
+             12); // TRACK_RIGHT or default
     }
 
     public double duration() {
-        return completed ? 0.0 : 1.0;
+        return completed ? 0.0 : 2.5;
     }
 }

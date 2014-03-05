@@ -8,7 +8,7 @@ import team2485.comp.TargetTracker;
  * Wait for the {@code TargetTracker} to detect targets.
  * @author Bryce Matsumori
  */
-public class WaitForTargetDetection implements SequencedItem {
+public class WaitForTarget implements SequencedItem {
     private boolean found = false;
 
     public void run() {
@@ -20,6 +20,6 @@ public class WaitForTargetDetection implements SequencedItem {
     }
 
     public double duration() {
-        return found ? 0.0 : 1.0; // maximum seconds before timing out
+        return found ? 0.0 : 0.4; // maximum seconds before timing out
     }
 }

@@ -7,7 +7,7 @@ import team2485.auto.SequencedItem;
  *
  * @author W.A.R.Lords
  */
-public class BallIsSettled implements SequencedItem {
+public class DetectBallInCatapult implements SequencedItem {
 
     private boolean done = false;
 
@@ -16,7 +16,7 @@ public class BallIsSettled implements SequencedItem {
     }
 
     public double duration() {
-        return done ? 0 : Integer.MAX_VALUE;
+        return done ? 0 : 1.5;
     }
 
 

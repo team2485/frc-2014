@@ -345,7 +345,7 @@ public final class Controllers {
     /**
      * Whether to use the G13 (true) for input or the joystick (false) for input.
      */
-    public static boolean USE_G13 = true;
+    public static boolean USE_G13 = false;
 
     /**
      * Reads either G13 or joystick button input, based on {@code USE_G13}.

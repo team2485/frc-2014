@@ -145,7 +145,7 @@ public class Catapult {
 
     public boolean inCatapult() {
         System.out.println("Sonic value " + sonic.getValue());
-        if(sonic.getValue() < 50)
+        if(sonic.getValue() < 20)
             return true;
         else
             return false;
@@ -153,5 +153,11 @@ public class Catapult {
 
     public boolean shoeExtended() {
         return solenoidShoeAdjuster.get();
+    }
+
+    public void reset() {
+        retract();
+        retractBoot();
+        retractShoe();
     }
 }

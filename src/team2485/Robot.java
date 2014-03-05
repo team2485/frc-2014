@@ -52,7 +52,7 @@ public class Robot extends IterativeRobot {
         leftEncoder  = new Encoder(13, 14);
         rightEncoder = new Encoder(12, 11);
 
-        drive             = new DriveTrain(new Talon(10), new Talon(8), leftEncoder, new Solenoid(5));
+        drive             = new DriveTrain(new Talon(10), new Talon(8), rightEncoder, new Solenoid(5));
         catapult          = new Catapult(1, 2, 3, 6, 7, new AnalogChannel(2));
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(1, 1000));
         locator           = new Locator(leftEncoder, rightEncoder, drive);
@@ -96,16 +96,15 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
         ringLightRelay.set(Relay.Value.kReverse);
-//        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.ONE_BALL);
-//        autoSequence = SequencerFactory.createAuto(autonomousType);
+        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_NO_HOT);
+        autoSequence = SequencerFactory.createAuto(autonomousType);
+
+        catapult.reset();
         tracker.resetAutoTrackState();
-        autoSequence = SequencerFactory.createAuto(SequencerFactory.FORWARD);
-        autoSequence.reset();
-        autoSequence = SequencerFactory.createAuto(SequencerFactory.THREE_BALL);
-
         drive.resetSensors();
-
         drive.lowGear();
+
+        ringLightRelay.set(Relay.Value.kReverse);
 
 //        drive.kP_G_Rotate = pid.getNumber("P_Gyro_Rotate");
 //        drive.kI_G_Rotate = pid.getNumber("I_Gyro_Rotate");
@@ -131,17 +130,16 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
-//        ringLightRelay.set(Relay.Value.kReverse);
         errorInAutonomous = false;
 
-//        ringLightRelay.set(Relay.Value.kReverse);
+        ringLightRelay.set(Relay.Value.kOff);
 
+        catapult.reset();
         arm.stopRollers();
     }
 
     private boolean prevOperatorBtn7 = false;
     public void teleopPeriodic() {
-
         //<editor-fold defaultstate="collapsed" desc="Driver Controls">
         // --- START DRIVER CONTROLS --- //
         drive.warlordDrive(
@@ -182,19 +180,19 @@ public class Robot extends IterativeRobot {
         if (Controllers.getG13OrJoyButton(24)) {
             if (Controllers.getJoystickButton(1)) {
                 catapult.shoot(SequencerFactory.TARGET_SHOT);
-                lightController.send(LightController.RAINBOW_CHASE);
+//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(2)) {
                 catapult.shoot(SequencerFactory.TRUSS_SHOT);
-                lightController.send(LightController.RAINBOW_CHASE);
+//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(3)) {
                 catapult.shoot(SequencerFactory.BOOT);
-                lightController.send(LightController.RAINBOW_CHASE);
+//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(5)) {
                 catapult.shoot(SequencerFactory.FORWARD_PASS);
-                lightController.send(LightController.RAINBOW_CHASE);
+//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getG13OrJoyButton(4)) {
                 catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
-                lightController.send(LightController.RAINBOW_CHASE);
+//                lightController.send(LightController.RAINBOW_CHASE);
             }
         }
 
@@ -256,27 +254,28 @@ public class Robot extends IterativeRobot {
         globalPeriodic();
     }
 
-    public void globalPeriodic() {
+    public void disabledPeriodic() {
+        globalPeriodic();
+    }
 
+    public void globalPeriodic() {
         if (arm.rollersOn()) {
             talArmSmart = 1;
         } else {
             talArmSmart = 0;
         }
         potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
-        SmartDashboard.putNumber("ArmPot " , potArmSmart);
+        SmartDashboard.putNumber("ArmPot" , potArmSmart);
 
-        locator.run();
-        SmartDashboard.putNumber("locatorx", locator.getX());
-        SmartDashboard.putNumber("locatory", locator.getY());
-        SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + ",false");
+//        locator.run();
+//        SmartDashboard.putNumber("locatorx", locator.getX());
+//        SmartDashboard.putNumber("locatory", locator.getY());
+//        SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + "," + imu.getYaw() + ",false");
 
         SmartDashboard.putNumber("pressure", pressureTransducer.getPressure());
 
         // DS info
         SmartDashboard.putNumber("battery", DriverStation.getInstance().getBatteryVoltage());
-        SmartDashboard.putNumber("matchtime", DriverStation.getInstance().getMatchTime());
         SmartDashboard.putBoolean("disabled", DriverStation.getInstance().isDisabled());
-        SmartDashboard.putNumber("mode", DriverStation.getInstance().isAutonomous() ? 1 : DriverStation.getInstance().isOperatorControl() ? 2 : 3);
     }
 }

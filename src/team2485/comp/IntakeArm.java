@@ -29,9 +29,10 @@ public class IntakeArm {
 
     // TODO: Find these setpoints
     public static final double
-            IN_CATAPULT      = 3000 + potSlippage,
+            IN_CATAPULT      = 2975 + potSlippage,
             UP_POSITION      = 2390 + potSlippage,
-            PICKUP           = 2800 + potSlippage,
+            FORTYFIVE_UP     = 2524 + potSlippage,
+            PICKUP           = 2868 + potSlippage,
             POPPER_POSITION  = 2017 + potSlippage,
             LOW_LIMIT        = 1951 + potSlippage;
 
@@ -180,7 +181,6 @@ public class IntakeArm {
 
         if (armPID.getSetpoint() == IN_CATAPULT && potValue > IN_CATAPULT - 100) {
             stopRollers();
-            Robot.catapult.extendShoe();
         }
 
         System.out.println("pot val " + potValue);

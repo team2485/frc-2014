@@ -41,9 +41,9 @@ public class DriveTrain {
     // TODO: Find all tolerances
     private final double AbsTolerance_Imu_DriveTo = 2.0;
     private final double AbsTolerance_Imu_TurnTo = 3.0;
-    private final double AbsTolerance_Enc = 2.0;
+    private final double AbsTolerance_Enc = 5;
     // TODO: Find low speed rates
-    private double lowEncRate = 2;
+    private double lowEncRate = 5;
     // --- END AUTO --- //
 
     // --- W.A.R. LORD DRIVE STUFF --- //
@@ -476,6 +476,14 @@ public class DriveTrain {
 
     public double getAngle() {
         return imu.getYaw();
+    }
+
+    public void disableIMUPID() {
+        imuPID.disable();
+    }
+
+    public void disableEncoderPID() {
+        encPID.disable();
     }
 
     // </editor-fold>

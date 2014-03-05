@@ -27,6 +27,6 @@ public class Drive implements SequencedItem {
     }
 
     public double duration() {
-        return done ? 0 : Double.MAX_VALUE;
+        return done ? 0 : 2.0;
     }
 }

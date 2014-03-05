@@ -4,10 +4,10 @@ package team2485.auto;
  * Creates complete sequence of all array items
  * @author W.A.R.Lords
  */
-public class SequencedItemArray implements SequencedItem {
+public class SequencedMultipleItem implements SequencedItem {
     private SequencedItem[] items;
 
-    public SequencedItemArray(SequencedItem[] itemsParam) {
+    public SequencedMultipleItem(SequencedItem[] itemsParam) {
         items = new SequencedItem[itemsParam.length];
         for(int x = 0; x < itemsParam.length; x++) {
             items[x] = itemsParam[x];
