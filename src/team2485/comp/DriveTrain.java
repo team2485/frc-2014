@@ -66,8 +66,7 @@ public class DriveTrain {
      * @param rightDrive
      * @param imu Can be null, set it later with {@code setImu()}
      * @param encoder
-     * @param gearShifter1
-     * @param gearShifter2
+     * @param gearShifter
      */
     public DriveTrain(Talon leftDrive, Talon rightDrive, IMU imu, Encoder encoder, Solenoid gearShifter) {
         this.leftDrive      = leftDrive;
@@ -111,8 +110,7 @@ public class DriveTrain {
      * @param rightDrivePort
      * @param encoderPortA
      * @param encoderPortB
-     * @param gearShifterPort1
-     * @param gearShifterPort2
+     * @param gearShifterPort
      */
     public DriveTrain(int leftDrivePort, int rightDrivePort, int encoderPortA, int encoderPortB, int gearShifterPort) {
         this(new Talon(leftDrivePort), new Talon(rightDrivePort), new Encoder(encoderPortA, encoderPortB), new Solenoid(gearShifterPort));
@@ -455,13 +453,13 @@ public class DriveTrain {
         encPID.setPID(kP_E, kI_E, kD_E);
     }
 
-    /**
-     * Set the PID values for the encoder {@code PIDController}
-     *
-     * @param Kp
-     * @param Ki
-     * @param Kd
-     */
+//    /**
+//     * Set the PID values for the encoder {@code PIDController}
+//     *
+//     * @param Kp
+//     * @param Ki
+//     * @param Kd
+//     */
 //    public void setPIDEnc(double Kp, double Ki, double Kd) {
 //        kP_E = Kp;
 //        kI_E = Ki;
@@ -474,7 +472,12 @@ public class DriveTrain {
         imu.zeroYaw();
     }
 
+    public double getEncoderOutput() {
+        return encoder.getDistance();
+    }
+
     public double getAngle() {
+        if (imu == null) return 0;
         return imu.getYaw();
     }
 

@@ -3,7 +3,6 @@ package team2485.comp;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
-import team2485.Robot;
 
 /**
  * Intake Arm class
@@ -16,7 +15,7 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static int potSlippage = -50;
+    private static final int potSlippage = -570;
     private boolean rollersOn = false;
 
     public static double
@@ -32,12 +31,16 @@ public class IntakeArm {
             IN_CATAPULT      = 2975 + potSlippage,
             UP_POSITION      = 2390 + potSlippage,
             FORTYFIVE_UP     = 2524 + potSlippage,
-            PICKUP           = 2868 + potSlippage,
+            PICKUP           = 2850 + potSlippage,
             POPPER_POSITION  = 2017 + potSlippage,
-            LOW_LIMIT        = 1951 + potSlippage;
+            LOW_LIMIT        = 1951 + potSlippage,
+            DEFENSE          = 2059 + potSlippage,
+            STARTING_CONFIG  = 2331 + potSlippage;
+
+    // all the way down 2475
 
     private double currentSetpoint = UP_POSITION;
-    public static double ROLLERS_FORWARD = -1.0, ROLLERS_REVERSE = ROLLERS_FORWARD *= -1;
+    public static final double ROLLERS_FORWARD = -1.0, ROLLERS_REVERSE = -ROLLERS_FORWARD;
     public static final int ABSOLUTE_TOLERANCE = 25;
 
     /**
@@ -101,9 +104,9 @@ public class IntakeArm {
 
     /**
      * Sets PID values
-     * @param Kp
-     * @param Ki
-     * @param Kd
+     * @param kP
+     * @param kI
+     * @param kD
      */
     public void setPID(double kP, double kI, double kD) {
         this.kP = kP;
@@ -116,6 +119,7 @@ public class IntakeArm {
     /**
      * Sets setpoint
      * @param setpoint
+     * @return
      */
     public boolean setSetpoint(double setpoint) {
         return setSetpoint(setpoint, true);
@@ -148,7 +152,7 @@ public class IntakeArm {
 
     /**
      * Moves arm manually
-     * @param direction
+     * @param speed
      */
     public void moveArm(double speed) {
         if (Math.abs(speed) > 0.5) {

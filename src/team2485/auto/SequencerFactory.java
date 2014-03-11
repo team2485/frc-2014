@@ -32,9 +32,9 @@ public class SequencerFactory {
             ONE_BALL_TRUSS_RIGHT                 = 6,
             // if hot, shoot, not - wait to shoot, move forward, on one side, angle to the center, move diagonally back
             ONE_BALL_FROM_LEFT_TO_CENTER_TRUSS   = 7,
-            // same as before, but other side version
-            ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS  = 8,
             // if hot, shoot, not - wait to shoot, but use angled shot left
+            ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS  = 8,
+            // same as before, but other side version
             ONE_BALL_ANGLED_SHOT_LEFT            = 9,
             // if hot, shoot, not - wait to shoot, but use angled shot right
             ONE_BALL_ANGLED_SHOT_RIGHT           = 10,
@@ -100,16 +100,18 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new SequencedDoubleItem(
                         new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
-                        new MoveArmNoWait(IntakeArm.IN_CATAPULT)
-                    ),
+                        new ExtendShoe()),
+                    new WaitForHot(WaitForHot.IN_FRONT),
+                    new SequencedPause(1.0),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new Drive(60),
+                    new DisableEncoderPID(),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new ExtendShoe(),
-                        new WaitForTarget(),
-                        new MoveArm(IntakeArm.IN_CATAPULT)
+                        new MoveArmNoWait(IntakeArm.IN_CATAPULT, false),
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                        new RetractShoe(),
                     }),
-                    new Drive(90),
-                    new WaitForHot(WaitForHot.LEFT),
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                 });
 
             // Aligned on right side
@@ -125,7 +127,7 @@ public class SequencerFactory {
                         new MoveArm(IntakeArm.IN_CATAPULT)
                     }),
                     new Drive(90),
-                    new WaitForHot(WaitForHot.RIGHT),
+                    new WaitForHot(WaitForHot.IN_FRONT),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                 });
 
@@ -165,7 +167,7 @@ public class SequencerFactory {
                        new ExtendShoe(),
                        new WaitForTarget(),
                        new Drive(45)}),
-                    new WaitForHot(WaitForHot.LEFT),
+                    new WaitForHot(WaitForHot.IN_FRONT),
                     new Rotate(-10),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                     new TurnToZero(),
@@ -178,7 +180,7 @@ public class SequencerFactory {
                        new ExtendShoe(),
                        new WaitForTarget(),
                        new Drive(45)}),
-                    new WaitForHot(WaitForHot.RIGHT),
+                    new WaitForHot(WaitForHot.IN_FRONT),
                     new Rotate(15),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                     new TurnToZero(),
@@ -188,7 +190,7 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new WaitForTarget(),
-                    new WaitForHot(WaitForHot.LEFT),
+                    new WaitForHot(WaitForHot.IN_FRONT),
                     // TODO: get custom rotate and drive values from dashboard
                     new Rotate(0),
                     new ExtendShoe(),
@@ -199,72 +201,64 @@ public class SequencerFactory {
             case TWO_BALL_NO_HOT:
                 return new Sequencer(new SequencedItem[] {
                     new ExtendShoe(),
-                    new MoveArmNoWait(IntakeArm.IN_CATAPULT - 100, false),
-                    new Drive(65),
-                    new DisableEncoderPID(),
-                    new SequencedPause(0.1),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArmNoWait(IntakeArm.PICKUP, false),
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                        new RetractShoe(),
+                    }),
+                    new SequencedPause(1),
+                    new MoveArm(IntakeArm.PICKUP, true),
+                    new DetectBallInCatapult(),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArm(IntakeArm.IN_CATAPULT),
+                        new StopRollers(),
+                        new ExtendShoe(),
+                    }),
+                    new SequencedPause(1.0), // settle time
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new RetractShooter(),
                         new WaitForBallToLeave(),
                         new RetractShoe(),
-                        new MoveArm(IntakeArm.PICKUP, true),
                     }),
-                    new SequencedPause(.15),
-                    new Drive(-10),
-                    new DisableEncoderPID(),
-                    new DetectBallInCatapult(),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArm(IntakeArm.IN_CATAPULT - 100),
-                        new StopRollers(),
-                    }),
-                    new SequencedDoubleItem(
-                        new Drive(65),
-                        new ExtendShoe()),
-                    new DisableEncoderPID(),
-                    new SequencedPause(0.1),
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new RetractShooter()
+                    new SequencedPause(0.5),
+                    new Drive(40),
+                    new DisableEncoderPID()
                  });
 
+
+            // from left
             case TWO_BALL_HOT:
                 return new Sequencer(new SequencedItem[] {
-                    new SequencedDoubleItem(
-                            new SequencedPause(TARGET_FLIP_PAUSE_TIME),
-                            new ExtendShoe()),
-                    new WaitForTarget(),
-                    new MoveArmNoWait(IntakeArm.IN_CATAPULT - 100, false),
-                    new Drive(65),
-                    new DisableEncoderPID(),
-                    new TurnToTarget(),
-                    new DisableIMUPID(),
-                    new SequencedPause(0.1),
+                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
+                    new WaitForHot(WaitForHot.IN_FRONT),
+                    new ExtendShoe(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArmNoWait(IntakeArm.PICKUP, false),
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                        new RetractShoe(),
+                    }),
+                    new SequencedPause(0.5),
+                    new MoveArm(IntakeArm.PICKUP, true),
+                    new DetectBallInCatapult(),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArm(IntakeArm.IN_CATAPULT),
+                        new StopRollers(),
+                        new ExtendShoe(),
+                    }),
+                    new SequencedPause(1.0), // settle time
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)), // second shot
                     new SequencedMultipleItem(new SequencedItem[] {
                         new RetractShooter(),
                         new WaitForBallToLeave(),
                         new RetractShoe(),
-                        new MoveArm(IntakeArm.PICKUP, true),
-                        new TurnToZero()
+                        new Drive(60)
                     }),
-                    new DisableIMUPID(),
-                    new SequencedPause(.15),
-                    new Drive(-10),
-                    new DisableEncoderPID(),
-                    new DetectBallInCatapult(),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArm(IntakeArm.IN_CATAPULT - 100),
-                        new StopRollers(),
-                    }),
-                    new SequencedDoubleItem(
-                        new Drive(65),
-                        new ExtendShoe()),
-                    new DisableEncoderPID(),
-                    new TurnToOtherTarget(),
-                    new DisableIMUPID(),
-                    new SequencedPause(0.1),
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new RetractShooter()
+                    new DisableEncoderPID()
             });
 
             case THREE_BALL:
@@ -285,7 +279,7 @@ public class SequencerFactory {
                         new StopRollers(),
                         new ExtendShoe(),
                     }),
-                    new SequencedPause(0.8), // settle time
+                    new SequencedPause(1.0), // settle time
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new RetractShooter(),

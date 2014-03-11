@@ -13,10 +13,11 @@ public class TargetTracker {
     private int autoTrackState = -1;
 
     public static final int
-            TRACK_NONE  = 0,
-            TRACK_LEFT  = 1,
-            TRACK_RIGHT = 2,
-            TRACK_BOTH  = 3;
+            TRACK_NONE   = 0,
+            TRACK_LEFT   = 1,
+            TRACK_RIGHT  = 2,
+            TRACK_BOTH   = 3,
+            TRACK_CENTER = 4;
 
     public TargetTracker() {
         table = NetworkTable.getTable("vision");

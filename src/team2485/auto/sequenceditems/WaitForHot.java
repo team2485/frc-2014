@@ -12,9 +12,11 @@ import team2485.comp.TargetTracker;
  */
 public class WaitForHot implements SequencedItem {
     private double duration = 0.1;
-    public static final int LEFT = 1,
-                            RIGHT = 2;
-    private int sideOfField;
+    public static final int
+            LEFT     = 1,
+            RIGHT    = 2,
+            IN_FRONT = 4; // center
+    private final int sideOfField;
     private double startTime = -1;
 
     public WaitForHot(int sideOfField) {
@@ -25,10 +27,12 @@ public class WaitForHot implements SequencedItem {
         int hot = Robot.tracker.getAutoTrackState();
         if (startTime == -1) startTime = DriverStation.getInstance().getMatchTime();
 
-        if((hot == TargetTracker.TRACK_LEFT && sideOfField == LEFT) || (hot == TargetTracker.TRACK_RIGHT && sideOfField == RIGHT))
+        if ((hot == TargetTracker.TRACK_LEFT   && sideOfField == LEFT)  ||
+            (hot == TargetTracker.TRACK_RIGHT  && sideOfField == RIGHT) ||
+            (hot == TargetTracker.TRACK_CENTER && sideOfField == IN_FRONT))
             duration = 0.0;
         else
-            duration = 5.0 + SequencerFactory.TARGET_FLIP_PAUSE_TIME - startTime;
+            duration = 5.0 - startTime;
 
         System.out.println("Duration = " + duration);
     }

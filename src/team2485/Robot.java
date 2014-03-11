@@ -35,7 +35,7 @@ public class Robot extends IterativeRobot {
     public int potArmSmart; // Variable for the smartdashboard output for the potentiometer value and the rollers
     public int talArmSmart; // Variable for the smartdashboard output for whether the motor is running
 
-    private static final boolean USE_G13 = true;
+    private static final boolean USE_G13 = false;
 
     private NetworkTable pid;
 
@@ -54,8 +54,8 @@ public class Robot extends IterativeRobot {
 
         drive             = new DriveTrain(new Talon(10), new Talon(8), rightEncoder, new Solenoid(5));
         catapult          = new Catapult(1, 2, 3, 6, 7, new AnalogChannel(2));
-        arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(1, 1000));
         locator           = new Locator(leftEncoder, rightEncoder, drive);
+        arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(5, 1000));
         errorInAutonomous = false;
         lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
 
@@ -96,7 +96,7 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
         ringLightRelay.set(Relay.Value.kReverse);
-        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_NO_HOT);
+        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.ONE_BALL_LEFT);
         autoSequence = SequencerFactory.createAuto(autonomousType);
 
         catapult.reset();
@@ -104,20 +104,19 @@ public class Robot extends IterativeRobot {
         drive.resetSensors();
         drive.lowGear();
 
+        locator.setAutoPosition(autonomousType);
+
         ringLightRelay.set(Relay.Value.kReverse);
 
 //        drive.kP_G_Rotate = pid.getNumber("P_Gyro_Rotate");
 //        drive.kI_G_Rotate = pid.getNumber("I_Gyro_Rotate");
 //        drive.kD_G_Rotate = pid.getNumber("D_Gyro_Rotate");
-//
 //        drive.kP_G_Drive = pid.getNumber("P_Gyro_Drive");
 //        drive.kI_G_Drive = pid.getNumber("I_Gyro_Drive");
 //        drive.kD_G_Drive = pid.getNumber("D_Gyro_Drive");
-//
 //        drive.kP_E = pid.getNumber("P_Encoder_Drive");
 //        drive.kI_E = pid.getNumber("I_Encoder_Drive");
 //        drive.kD_E = pid.getNumber("D_Encoder_Drive");
-
 //        drive.setPIDEnc(drive.kP_E, drive.kI_E, drive.kD_E);
 //        drive.setPIDGyro(drive.kP_G_Drive, drive.kI_G_Drive, drive.kD_G_Drive);
     }
@@ -243,7 +242,7 @@ public class Robot extends IterativeRobot {
         arm.run();
         catapult.run();
         globalPeriodic();
-        lightController.send(LightController.INTAKE);
+        lightController.send(LightController.HAPPY_RAINBOW);
     }
 
     public void testPeriodic() {
@@ -266,11 +265,10 @@ public class Robot extends IterativeRobot {
         }
         potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
         SmartDashboard.putNumber("ArmPot" , potArmSmart);
+        System.out.println("Pot value = " + arm.getPotValue());
 
-//        locator.run();
-//        SmartDashboard.putNumber("locatorx", locator.getX());
-//        SmartDashboard.putNumber("locatory", locator.getY());
-//        SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + "," + imu.getYaw() + ",false");
+        locator.run();
+        SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
 
         SmartDashboard.putNumber("pressure", pressureTransducer.getPressure());
 
