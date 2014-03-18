@@ -264,9 +264,8 @@ public class Robot extends IterativeRobot {
             talArmSmart = 0;
         }
         potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
-        SmartDashboard.putNumber("ArmPot" , potArmSmart);
-        System.out.println("Pot value = " + arm.getPotValue());
-
+        SmartDashboard.putString("ArmPot" , IntakeArm.UP_POSITION + "," + potArmSmart);
+        
         locator.run();
         SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
 
