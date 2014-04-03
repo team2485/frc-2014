@@ -3,27 +3,28 @@ package team2485.auto.sequenceditems;
 import team2485.Robot;
 import team2485.auto.SequencedItem;
 import team2485.auto.SequencerFactory;
+import team2485.comp.Catapult;
 
 /**
- * Extends the shoe piston
+ * Retracts the shoe piston
  * @author Marty
  */
-public class ExtendShoe implements SequencedItem {
+public class FullyRetractShoe implements SequencedItem {
 
     private boolean initialCheck = true;
     private double duration;
 
     public void run() {
         if (initialCheck) {
-            duration = Robot.catapult.shoeExtended() ? 0 : 0.35;
+            duration = Robot.catapult.getShoeState() == Catapult.FULLY_RETRACTED ? 0 : 0.2;
             initialCheck = false;
         }
 
-        Robot.catapult.extendShoe();
+        Robot.catapult.retractShoeFull();
     }
 
     public double duration() {
-       if(Robot.errorInAutonomous)
+        if(Robot.errorInAutonomous)
             return 0;
 
         return duration;

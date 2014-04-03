@@ -187,8 +187,6 @@ public class IntakeArm {
             stopRollers();
         }
 
-        System.out.println("pot val " + potValue);
-
         if (isPID) {
             if (!armPID.onTarget()) {
                 armPID.enable();
@@ -211,5 +209,8 @@ public class IntakeArm {
         return rollersOn;
     }
 
-}
+    public void disableArmPID() {
+        armPID.disable();
+    }
 
+}

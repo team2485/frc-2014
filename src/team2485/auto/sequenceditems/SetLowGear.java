@@ -5,20 +5,23 @@ import team2485.auto.SequencedItem;
 
 /**
  *
- * @author MK
+ * @author Camille Considine
  */
-public class DisableIMUPID implements SequencedItem {
+public class SetLowGear implements SequencedItem {
 
     private boolean hasRun;
-
+    
     public void run() {
-        Robot.drive.disableIMUPID();
-        Robot.drive.warlordDrive(0, 0);
-        hasRun = true;
+        if (!hasRun) {
+            Robot.drive.lowGear();
+            hasRun = true;
+        }
     }
 
     public double duration() {
         return hasRun ? 0 : 1;
     }
 
+
 }
+

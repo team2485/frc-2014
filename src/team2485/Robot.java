@@ -22,10 +22,14 @@ import team2485.util.Controllers;
  */
 public class Robot extends IterativeRobot {
 
+    // forward pass = two cylinders choked
+    // midrange shot long extended
+
     // Subsystems
     public static DriveTrain drive;
     public static Catapult catapult;
     public static IntakeArm arm;
+    public static Catcher catcher;
     public static TargetTracker tracker;
     public static IMU imu;
     private final static byte IMU_UPDATE_RATE = 30;
@@ -53,9 +57,10 @@ public class Robot extends IterativeRobot {
         rightEncoder = new Encoder(12, 11);
 
         drive             = new DriveTrain(new Talon(10), new Talon(8), rightEncoder, new Solenoid(5));
-        catapult          = new Catapult(1, 2, 3, 6, 7, new AnalogChannel(2));
+        catapult          = new Catapult(1, 2, 4, 6, 7, new AnalogChannel(2));
         locator           = new Locator(leftEncoder, rightEncoder, drive);
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(5, 1000));
+        catcher           = new Catcher(3);
         errorInAutonomous = false;
         lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
 
@@ -96,7 +101,7 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
         ringLightRelay.set(Relay.Value.kReverse);
-        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.ONE_BALL_LEFT);
+        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_HOT);
         autoSequence = SequencerFactory.createAuto(autonomousType);
 
         catapult.reset();
@@ -138,6 +143,8 @@ public class Robot extends IterativeRobot {
     }
 
     private boolean prevOperatorBtn7 = false;
+    private boolean prevOperatorBtn13 = false;
+    private boolean prevOperatorBtn14 = false;
     public void teleopPeriodic() {
         //<editor-fold defaultstate="collapsed" desc="Driver Controls">
         // --- START DRIVER CONTROLS --- //
@@ -167,7 +174,7 @@ public class Robot extends IterativeRobot {
         // Driver pickup controls
         if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
             arm.setSetpoint(IntakeArm.PICKUP);
-            lightController.send(LightController.INTAKE);
+//            lightController.send(LightController.INTAKE);
         }
 
         // --- END DRIVER CONTROLS --- //
@@ -187,55 +194,69 @@ public class Robot extends IterativeRobot {
                 catapult.shoot(SequencerFactory.BOOT);
 //                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(5)) {
-                catapult.shoot(SequencerFactory.FORWARD_PASS);
+                catapult.shoot(SequencerFactory.MIDRANGE_SHOT_THREE_CYLINDER);
+            } else if (Controllers.getJoystickButton(10)) {
+                catapult.shoot(SequencerFactory.OVER_TRUSS_CATCH);
 //                lightController.send(LightController.RAINBOW_CHASE);
-            } else if (Controllers.getG13OrJoyButton(4)) {
-                catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
+//            } else if (Controllers.getG13OrJoyButton(4)) {
+//                catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
 //                lightController.send(LightController.RAINBOW_CHASE);
             }
         }
 
-//        if (!prevJoystick11 && Controllers.getG13OrJoyButton(13))
-//            catapult.toggleShoe();
+        if (!prevOperatorBtn14 && Controllers.getG13OrJoyButton(14))
+//            catapult.extendShoeFull();
+            catapult.setShoeState(catapult.CURRENT_SHOE_STATE + 1);
+        if (!prevOperatorBtn13 && Controllers.getG13OrJoyButton(13))
+//            catapult.retractShoeFull();
+            catapult.setShoeState(catapult.CURRENT_SHOE_STATE - 1);
 
-        if (Controllers.getG13OrJoyButton(14))
-            catapult.extendShoe();
-        if (Controllers.getG13OrJoyButton(13))
-            catapult.retractShoe();
+        prevOperatorBtn13 = Controllers.getG13OrJoyButton(13);
+        prevOperatorBtn14 = Controllers.getG13OrJoyButton(14);
+
 
         // Arm position controls
         if (Controllers.getJoystickButton(4)) {
             arm.setSetpoint(IntakeArm.IN_CATAPULT);
-            lightController.send(LightController.RAINBOW_CYCLE);
+//            lightController.send(LightController.RAINBOW_CYCLE);
         } else if (Controllers.getJoystickButton(6))
             arm.setSetpoint(IntakeArm.UP_POSITION);
         else if (Controllers.getJoystickButton(9)) {
             arm.setSetpoint(IntakeArm.PICKUP);
-            lightController.send(LightController.GOLD_CHASE);
+//            lightController.send(LightController.GOLD_CHASE);
         }
+//        else if (Controllers.getJoystickButton(10)) {
+//            arm.setSetpoint(IntakeArm.DEFENSE);
+//        }
 
         else if (!prevOperatorBtn7 && Controllers.getG13OrJoyButton(7))
             arm.stopRollers();
         prevOperatorBtn7 = Controllers.getG13OrJoyButton(7);
 
+        // Catcher logic
+        if (Controllers.getJoystickAxis(4) > 0)
+            catcher.extend();
+        else
+            catcher.retract();
+
         arm.moveArm(-Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
         // --- END OPERATOR CONTROL --- //
         //</editor-fold>
 
-        switch ((int) DriverStation.getInstance().getMatchTime()) {
-            case 45:
-                lightController.send(LightController.GOLD);
-                break;
-            case 75:
-                lightController.send(LightController.GREEN);
-                break;
-            case 105:
-                lightController.send(LightController.BLUE);
-                break;
-            case 135:
-                lightController.send(LightController.RED);
-                break;
-        }
+//        switch ((int) DriverStation.getInstance().getMatchTime()) {
+//            case 45:
+//                lightController.send(LightController.GOLD);
+//                break;
+//            case 75:
+//                lightController.send(LightController.GREEN);
+//                break;
+//            case 105:
+//                lightController.send(LightController.BLUE);
+//                break;
+//            case 135:
+//                lightController.send(LightController.RED);
+//                break;
+//        }
 
 
         // Arm updates
@@ -247,6 +268,9 @@ public class Robot extends IterativeRobot {
 
     public void testPeriodic() {
         compressor.start();
+
+        if (Controllers.getJoystickButton(1))
+            arm.setSetpoint(IntakeArm.STARTING_CONFIG);
 
         ringLightRelay.set(Relay.Value.kReverse);
 
@@ -266,6 +290,8 @@ public class Robot extends IterativeRobot {
         potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
         SmartDashboard.putString("ArmPot" , IntakeArm.UP_POSITION + "," + potArmSmart);
         
+        System.out.println("gyro angle = " + drive.getAngle() + " ultrasonic sensor = " + catapult.inCatapult());
+
         locator.run();
         SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
 

@@ -400,14 +400,14 @@ public class DriveTrain {
      * Set the gear boxes into high gear
      */
     public void highGear() {
-        gearShifter.set(true);
+        gearShifter.set(false);
     }
 
     /**
      * Set the gear boxes into low gear
      */
     public void lowGear() {
-        gearShifter.set(false);
+        gearShifter.set(true);
     }
 
     /**

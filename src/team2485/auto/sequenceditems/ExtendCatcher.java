@@ -7,18 +7,17 @@ import team2485.auto.SequencedItem;
  *
  * @author W.A.R.Lords
  */
-public class DetectBallInCatapult implements SequencedItem {
+public class ExtendCatcher implements SequencedItem {
 
-    private boolean done = false;
+    private boolean hasRun = false;
 
     public void run() {
-       done = Robot.catapult.inCatapult();
+        Robot.catcher.extend();
+        hasRun = true;
     }
 
     public double duration() {
-        return done ? 0 : 2.5;
+        return hasRun ? 0 : 1;
     }
-
-
 
 }

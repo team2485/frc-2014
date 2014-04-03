@@ -20,6 +20,6 @@ public class WaitForTarget implements SequencedItem {
     }
 
     public double duration() {
-        return found ? 0.0 : 0.4; // maximum seconds before timing out
+        return found ? 0.0 : 0.2; // maximum seconds before timing out
     }
 }

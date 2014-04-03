@@ -14,11 +14,20 @@ import team2485.auto.SequencerFactory;
 public class Catapult {
 
     private Solenoid
-            solenoid1,
-            solenoid2,
+            sideSolenoids,
+            centerSolenoid,
             solenoid3,
-            solenoidShoeAdjuster,
+            solenoidShoeShort,
+            solenoidShoeLong,
             solenoidBoot;
+
+    public int CURRENT_SHOE_STATE  = 1;
+    public static int FULLY_RETRACTED   = 1,
+            SHORT_EXTENDED              = 2,
+            LONG_EXTENDED               = 3,
+            FULLY_EXTENDED              = 4;
+
+
 
     private Sequencer shootSequencer;
     private AnalogChannel sonic;
@@ -32,11 +41,11 @@ public class Catapult {
      * @param solenoidShoeAdjuster
      * @param solenoidBoot
      */
-    public Catapult(Solenoid solenoidLeft, Solenoid solenoidMiddle, Solenoid solenoidRight, Solenoid solenoidShoeAdjuster, Solenoid solenoidBoot, AnalogChannel sonic) {
-        this.solenoid1              = solenoidLeft;
-        this.solenoid2              = solenoidMiddle;
-        this.solenoid3              = solenoidRight;
-        this.solenoidShoeAdjuster   = solenoidShoeAdjuster;
+    public Catapult(Solenoid sideSolenoids, Solenoid solenoidMiddle, Solenoid solenoidShoeAdjuster1, Solenoid solenoidShoeAdjuster2, Solenoid solenoidBoot, AnalogChannel sonic) {
+        this.sideSolenoids          = sideSolenoids;
+        this.centerSolenoid         = solenoidMiddle;
+        this.solenoidShoeShort      = solenoidShoeAdjuster1;
+        this.solenoidShoeLong       = solenoidShoeAdjuster2;
         this.solenoidBoot           = solenoidBoot;
         this.sonic                  = sonic;
     }
@@ -49,8 +58,8 @@ public class Catapult {
      * @param solenoidRightPort
      * @param solenoidShoeAdjusterPort
      */
-    public Catapult(int solenoidLeftPort, int solenoidMiddlePort, int solenoidRightPort, int solenoidShoeAdjusterPort, int solenoidBoot, AnalogChannel sonic) {
-        this(new Solenoid(solenoidLeftPort), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidRightPort), new Solenoid(solenoidShoeAdjusterPort), new Solenoid(solenoidBoot), sonic);
+    public Catapult(int sideSolenoids, int solenoidMiddlePort, int solenoidShoeAdjusterPort1, int solenoidShoeAdjusterPort2, int solenoidBoot, AnalogChannel sonic) {
+        this(new Solenoid(sideSolenoids), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidShoeAdjusterPort1), new Solenoid(solenoidShoeAdjusterPort2), new Solenoid(solenoidBoot), sonic);
     }
 
     /**
@@ -73,60 +82,64 @@ public class Catapult {
      * Extends the center catapult piston
      */
     public void extendOne() {
-        solenoid1.set(false);
-        solenoid2.set(true);
-        solenoid3.set(false);
+        sideSolenoids.set(false);
+        centerSolenoid.set(true);
     }
 
     /**
      * Extends the left and right catapult pistons
      */
     public void extendTwo() {
-        solenoid1.set(true);
-        solenoid2.set(false);
-        solenoid3.set(true);
+        sideSolenoids.set(true);
+        centerSolenoid.set(false);
     }
 
     /**
      * Extends all three catapult pistons
      */
     public void extendThree() {
-        solenoid1.set(true);
-        solenoid2.set(true);
-        solenoid3.set(true);
+        sideSolenoids.set(true);
+        centerSolenoid.set(true);
     }
 
     public void extendRightPiston() {
-        solenoid1.set(false);
-        solenoid2.set(false);
-        solenoid3.set(true);
+        sideSolenoids.set(false);
+        centerSolenoid.set(false);
     }
 
     /**
      * Retracts all three catapult pistons
      */
     public void retract() {
-        solenoid1.set(false);
-        solenoid2.set(false);
-        solenoid3.set(false);
+        sideSolenoids.set(false);
+        centerSolenoid.set(false);
     }
 
     public void toggleShoe() {
-        solenoidShoeAdjuster.set(!solenoidShoeAdjuster.get());
+        solenoidShoeShort.set(!solenoidShoeShort.get());
     }
+
 
     /**
      * Puts the shoe piston into the intake position
      */
-    public void extendShoe() {
-        solenoidShoeAdjuster.set(true);
+    public void extendShoeFull() {
+        setShoeState(FULLY_EXTENDED);
     }
 
     /**
      * Puts the shoe piston into the shooting position
      */
-    public void retractShoe() {
-        solenoidShoeAdjuster.set(false);
+    public void retractShoeFull() {
+        setShoeState(FULLY_RETRACTED);
+    }
+
+    public void extendShoeLongPiston() {
+        setShoeState(LONG_EXTENDED);
+    }
+
+    public void extendShoeShortPiston() {
+        setShoeState(SHORT_EXTENDED);
     }
 
     /**
@@ -145,19 +158,57 @@ public class Catapult {
 
     public boolean inCatapult() {
         System.out.println("Sonic value " + sonic.getValue());
-        if(sonic.getValue() < 20)
+        if(sonic.getValue() < 20) // was 25
             return true;
         else
             return false;
     }
 
-    public boolean shoeExtended() {
-        return solenoidShoeAdjuster.get();
+    public boolean shoeShortExtended() {
+        return solenoidShoeShort.get();
+    }
+
+    public boolean shoeLongExtended() {
+        return solenoidShoeLong.get();
     }
 
     public void reset() {
         retract();
         retractBoot();
-        retractShoe();
+        retractShoeFull();
+    }
+
+    public void setShoeState(int state) {
+        if (state < FULLY_RETRACTED || state > FULLY_EXTENDED) {
+            ; // do nothing
+        } else {
+            CURRENT_SHOE_STATE = state;
+            switch (CURRENT_SHOE_STATE) {
+                // fully retracted
+                case 1:
+                    solenoidShoeShort.set(false);
+                    solenoidShoeLong.set(false);
+                    break;
+                // short piston extended
+                case 2:
+                    solenoidShoeShort.set(true);
+                    solenoidShoeLong.set(false);
+                    break;
+                // long piston extended
+                case 3:
+                    solenoidShoeShort.set(false);
+                    solenoidShoeLong.set(true);
+                    break;
+                // full shoe extended
+                case 4:
+                    solenoidShoeShort.set(true);
+                    solenoidShoeLong.set(true);
+                    break;
+            }
+        }
+    }
+
+    public int getShoeState() {
+        return CURRENT_SHOE_STATE;
     }
 }

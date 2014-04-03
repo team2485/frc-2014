@@ -46,6 +46,7 @@ public class SequencerFactory {
             THREE_BALL                           = 13,
 
             TWO_BALL_NO_HOT                      = 14,
+            THREE_BALL_HOT                       = 15,
 
             // Shot options
             TARGET_SHOT                     = 0,
@@ -53,9 +54,12 @@ public class SequencerFactory {
             BOOT                            = 2,
             FORWARD_PASS                    = 3,
             POWER_HIGH_SHOT                 = 4,
-            TARGET_SHOT_WITHOUT_RETRACTION  = 5;
+            TARGET_SHOT_WITHOUT_RETRACTION  = 5,
+            MIDRANGE_SHOT_THREE_CYLINDER    = 6,
+            MIDRANGE_SHOT_TWO_CYLINDER      = 7,
+            OVER_TRUSS_CATCH                = 8;
 
-    public static final double TARGET_FLIP_PAUSE_TIME = 0.3;
+    public static final double TARGET_FLIP_PAUSE_TIME = 0.2;
     public static final double RETRACT_EXTEND_TIME = 0.7; // TODO: figure out duration
 
     /**
@@ -100,35 +104,34 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new SequencedDoubleItem(
                         new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
-                        new ExtendShoe()),
-                    new WaitForHot(WaitForHot.IN_FRONT),
-                    new SequencedPause(1.0),
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new Drive(60),
-                    new DisableEncoderPID(),
+                        new MoveArmNoWait(IntakeArm.IN_CATAPULT - 50)
+                    ),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArmNoWait(IntakeArm.IN_CATAPULT, false),
-                        new RetractShooter(),
-                        new WaitForBallToLeave(),
-                        new RetractShoe(),
+                        new WaitForTarget(),
+                        new MoveArm(IntakeArm.IN_CATAPULT)
                     }),
+                    new WaitForHot(WaitForHot.IN_FRONT),
+                    new DisableArmPID(),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
+                    new Drive(50)
                 });
+
 
             // Aligned on right side
             case ONE_BALL_RIGHT:
                 return new Sequencer(new SequencedItem[] {
                     new SequencedDoubleItem(
                         new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
-                        new MoveArmNoWait(IntakeArm.IN_CATAPULT)
+                        new MoveArmNoWait(IntakeArm.IN_CATAPULT - 50)
                     ),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new ExtendShoe(),
                         new WaitForTarget(),
                         new MoveArm(IntakeArm.IN_CATAPULT)
                     }),
-                    new Drive(90),
                     new WaitForHot(WaitForHot.IN_FRONT),
+                    new DisableArmPID(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
+                    new Drive(50)
                 });
 
             // Aligned on left side
@@ -164,7 +167,7 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedMultipleItem(new SequencedItem[] {
-                       new ExtendShoe(),
+                       new FullyExtendShoe(),
                        new WaitForTarget(),
                        new Drive(45)}),
                     new WaitForHot(WaitForHot.IN_FRONT),
@@ -177,7 +180,7 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new SequencedPause(TARGET_FLIP_PAUSE_TIME),
                     new SequencedMultipleItem(new SequencedItem[] {
-                       new ExtendShoe(),
+                       new FullyExtendShoe(),
                        new WaitForTarget(),
                        new Drive(45)}),
                     new WaitForHot(WaitForHot.IN_FRONT),
@@ -193,116 +196,292 @@ public class SequencerFactory {
                     new WaitForHot(WaitForHot.IN_FRONT),
                     // TODO: get custom rotate and drive values from dashboard
                     new Rotate(0),
-                    new ExtendShoe(),
+                    new FullyExtendShoe(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                    new Drive(0)
                 });
 
             case TWO_BALL_NO_HOT:
                 return new Sequencer(new SequencedItem[] {
-                    new ExtendShoe(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new InnerSequencer(SequencerFactory.createAuto(SequencerFactory.TARGET_SHOT)),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArmNoWait(IntakeArm.PICKUP, false),
+                        new MoveArm(IntakeArm.PICKUP, false),
                         new RetractShooter(),
                         new WaitForBallToLeave(),
-                        new RetractShoe(),
                     }),
-                    new SequencedPause(1),
-                    new MoveArm(IntakeArm.PICKUP, true),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new FullyRetractShoe(),
+                        new MoveArm(IntakeArm.PICKUP, true)
+                    }),
                     new DetectBallInCatapult(),
+                    new SequencedPause(0.1),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArm(IntakeArm.IN_CATAPULT),
+                        new MoveArm(IntakeArm.IN_CATAPULT - 25),
                         new StopRollers(),
-                        new ExtendShoe(),
+//                        new FullyExtendShoe(),
                     }),
-                    new SequencedPause(1.0), // settle time
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new RetractShooter(),
-                        new WaitForBallToLeave(),
-                        new RetractShoe(),
-                    }),
-                    new SequencedPause(0.5),
-                    new Drive(40),
-                    new DisableEncoderPID()
-                 });
-
-
-            // from left
-            case TWO_BALL_HOT:
-                return new Sequencer(new SequencedItem[] {
-                    new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
-                    new WaitForHot(WaitForHot.IN_FRONT),
-                    new ExtendShoe(),
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArmNoWait(IntakeArm.PICKUP, false),
-                        new RetractShooter(),
-                        new WaitForBallToLeave(),
-                        new RetractShoe(),
-                    }),
-                    new SequencedPause(0.5),
-                    new MoveArm(IntakeArm.PICKUP, true),
-                    new DetectBallInCatapult(),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArm(IntakeArm.IN_CATAPULT),
-                        new StopRollers(),
-                        new ExtendShoe(),
-                    }),
-                    new SequencedPause(1.0), // settle time
+                    new DisableArmPID(),
+                    new SequencedPause(0.6), // settle time
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)), // second shot
                     new SequencedMultipleItem(new SequencedItem[] {
                         new RetractShooter(),
                         new WaitForBallToLeave(),
-                        new RetractShoe(),
+                        new FullyRetractShoe(),
                         new Drive(60)
                     }),
                     new DisableEncoderPID()
             });
 
+            // from left
+            case TWO_BALL_HOT:
+                return new Sequencer(new SequencedItem[] {
+                    new SequencedDoubleItem(
+                            new SequencedPause(TARGET_FLIP_PAUSE_TIME),
+                            new FullyExtendShoe()),
+                    new WaitForTarget(),
+                    new MoveArmNoWait(IntakeArm.IN_CATAPULT - 100, false),
+                    new Drive(65),
+                    new DisableEncoderPID(),
+                    new TurnToTarget(),
+                    new DisableIMUPID(),
+                    new SequencedPause(0.1),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                        new FullyRetractShoe(),
+                        new MoveArm(IntakeArm.PICKUP, true),
+                        new TurnToZero()
+                    }),
+                    new DisableIMUPID(),
+                    new SequencedPause(.15),
+                    new Drive(-10),
+                    new DisableEncoderPID(),
+                    new DetectBallInCatapult(),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArm(IntakeArm.IN_CATAPULT - 100),
+                        new StopRollers(),
+                    }),
+                    new SequencedDoubleItem(
+                        new Drive(65),
+                        new FullyExtendShoe()),
+                    new DisableEncoderPID(),
+                    new TurnToOtherTarget(),
+                    new DisableIMUPID(),
+                    new SequencedPause(0.1),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new RetractShooter()
+            });
+
             case THREE_BALL:
                 return new Sequencer(new SequencedItem[] {
-                    new ExtendShoe(),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArmNoWait(IntakeArm.PICKUP - 100, false),
+                        new SequencedPause(0.4)
+                    }),
+                    new DisableArmPID(),
+                    new SequencedPause(0.8),
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArm(IntakeArm.PICKUP, false),
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                    }),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new FullyRetractShoe(),
+                        new MoveArm(IntakeArm.PICKUP, true)
+                    }),
+                    new DetectBallInCatapult(),
+                    new SequencedPause(0.1),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArm(IntakeArm.IN_CATAPULT - 25),
+                        new StopRollers(),
+                    }),
+                    new DisableArmPID(),
+                    new SequencedPause(0.5), // settle time
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)), // second shot
+
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new RetractShooter(),
+                        new MoveArm(IntakeArm.PICKUP)
+                    }),
+
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new FullyRetractShoe(),
+                        new Drive(-24),
+                    }),
+
+                    new DetectBallInCatapult(),
+//                    new SequencedPause(0.1),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArm(IntakeArm.IN_CATAPULT - 25),
+                        new StopRollers(),
+                        new Drive(50)
+                    }),
+                    new DisableArmPID(),
+                    new SequencedPause(0.6), // settle time
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)), // third shot
+
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new RetractShooter(),
+                        new WaitForBallToLeave()
+                    }),
+                    new FullyRetractShoe(),
+                    new DisableEncoderPID()
+                });
+
+                // <editor-fold defaultstate="collapsed" desc="Previous three ball">
+//                return new Sequencer(new SequencedItem[] {
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArmNoWait(IntakeArm.PICKUP - 100, false),
+//                        new SequencedPause(1.5)
+//                    }),
+//                    new DisableArmPID(),
+//                    new SequencedPause(0.8),
+//
+//
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArmNoWait(IntakeArm.PICKUP, false),
+//                        new RetractShooter(),
+//                        new WaitForBallToLeave()
+//                    }),
+//                    new SequencedPause(0.8),
+//                    new MoveArm(IntakeArm.PICKUP, true),
+//                    new DetectBallInCatapult(),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArm(IntakeArm.IN_CATAPULT),
+//                        new StopRollers(),
+//                        new FullyExtendShoe(),
+//                    }),
+//                    new SequencedPause(1.0), // settle time
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new RetractShooter(),
+//                        new WaitForBallToLeave(),
+//                        new FullyRetractShoe(),
+//                    }),
+//                    new SequencedPause(0.5),
+//                    new SequencedDoubleItem(
+//                        new MoveArm(IntakeArm.PICKUP, true),
+//                        new Drive(-24)),
+//                    new DisableEncoderPID(),
+//                    new DetectBallInCatapult(),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArm(IntakeArm.IN_CATAPULT),
+//                        new StopRollers(),
+//                        new Drive(50),
+//                        new FullyExtendShoe()
+//                    }),
+//                    new DisableEncoderPID(),
+//                    new SequencedPause(0.8), // settle time
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new RetractShooter()
+//                 });
+                // </editor-fold>
+
+                // <editor-fold defaultstate="collapsed" desc="Auto from SD (pre-catcher)">
+//                return new Sequencer(new SequencedItem[] {
+//                    new FullyExtendShoe(),
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArmNoWait(IntakeArm.PICKUP, false),
+//                        new RetractShooter(),
+//                        new WaitForBallToLeave(),
+//                        new FullyRetractShoe(),
+//                    }),
+//                    new SequencedPause(0.8),
+//                    new MoveArm(IntakeArm.PICKUP, true),
+//                    new DetectBallInCatapult(),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArm(IntakeArm.IN_CATAPULT),
+//                        new StopRollers(),
+//                        new FullyExtendShoe(),
+//                    }),
+//                    new SequencedPause(1.0), // settle time
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new RetractShooter(),
+//                        new WaitForBallToLeave(),
+//                        new FullyRetractShoe(),
+//                    }),
+//                    new SequencedPause(0.5),
+//                    new SequencedDoubleItem(
+//                        new MoveArm(IntakeArm.PICKUP, true),
+//                        new Drive(-24)),
+//                    new DisableEncoderPID(),
+//                    new DetectBallInCatapult(),
+//                    new SequencedMultipleItem(new SequencedItem[] {
+//                        new MoveArm(IntakeArm.IN_CATAPULT),
+//                        new StopRollers(),
+//                        new Drive(30),
+//                        new FullyExtendShoe()
+//                    }),
+//                    new DisableEncoderPID(),
+//                    new SequencedPause(0.8), // settle time
+//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+//                    new RetractShooter()
+//                 });
+            // </editor-fold>
+
+            // AKA MARTY'S BABY
+            case THREE_BALL_HOT:
+                return new Sequencer(new SequencedItem[] {
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new SequencedPause(TARGET_FLIP_PAUSE_TIME), // wait until the targets have flipped
+                        new FullyExtendShoe(),
+                        new SetLowGear(),
+                        new ExtendCatcher(),
+                        new MoveArmNoWait(IntakeArm.PICKUP - 100)
+                    }),
+                    new TurnToTarget(),
+                    new DisableIMUPID(),
+                    new SequencedDoubleItem(
+                        new SequencedPause(0.8),
+                        new DisableArmPID()),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new MoveArmNoWait(IntakeArm.PICKUP, false),
                         new RetractShooter(),
                         new WaitForBallToLeave(),
-                        new RetractShoe(),
+                        new FullyRetractShoe(),
+                    }),
+                    new SequencedPause(1),
+                    new MoveArm(IntakeArm.PICKUP, true),
+                    new DetectBallInCatapult(),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new MoveArmNoWait(IntakeArm.PICKUP - 100, false),
+                        new StopRollers(),
+                        new FullyExtendShoe(),
+                    }),
+                    new TurnToOtherTarget(),
+                    new DisableIMUPID(),
+                    new SequencedPause(0.8), // settle time
+                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                        new FullyRetractShoe(),
                     }),
                     new SequencedPause(0.8),
                     new MoveArm(IntakeArm.PICKUP, true),
                     new DetectBallInCatapult(),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArm(IntakeArm.IN_CATAPULT),
                         new StopRollers(),
-                        new ExtendShoe(),
+                        new FullyExtendShoe()
                     }),
-                    new SequencedPause(1.0), // settle time
-                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new RetractShooter(),
-                        new WaitForBallToLeave(),
-                        new RetractShoe(),
-                    }),
-                    new SequencedPause(0.5),
-                    new SequencedDoubleItem(
-                        new MoveArm(IntakeArm.PICKUP, true),
-                        new Drive(-24)),
-                    new DisableEncoderPID(),
-                    new DetectBallInCatapult(),
-                    new SequencedMultipleItem(new SequencedItem[] {
-                        new MoveArm(IntakeArm.IN_CATAPULT),
-                        new StopRollers(),
-                        new Drive(30),
-                        new ExtendShoe()
-                    }),
-                    new DisableEncoderPID(),
                     new SequencedPause(0.8), // settle time
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-                    new RetractShooter()
-                 });
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new SetHighGear(),
+                        new Drive(80),
+                        new RetractShooter(),
+                        new WaitForBallToLeave(),
+                        new FullyRetractShoe()
+                    }),
+                    new DisableEncoderPID()
+                });
 
             default: return new Sequencer(); // return an empty sequence
         }
@@ -328,26 +507,26 @@ public class SequencerFactory {
         switch (type) {
             case POWER_HIGH_SHOT:
                 return new Sequencer(new SequencedItem[] {
-                    new RetractShoe(),
+                    new FullyRetractShoe(),
                     new ExtendThreePistons(),
                     new RetractShooter(),
-                    new RetractShoe()
+                    new FullyRetractShoe()
                 });
 
             case TRUSS_SHOT:
                 return new Sequencer(new SequencedItem[] {
-                    new RetractShoe(),
+                    new ExtendShoeShortPiston(),
                     new ExtendTwoPistons(),
                     new RetractShooter(),
-                    new RetractShoe()
+                    new FullyRetractShoe()
                 });
 
             case TARGET_SHOT:
                 return new Sequencer(new SequencedItem[] {
-                    new ExtendShoe(),
+                    new FullyExtendShoe(),
                     new ExtendThreePistons(),
                     new RetractShooter(),
-                    new RetractShoe()
+                    new FullyRetractShoe()
                 });
 
             case BOOT:
@@ -358,18 +537,42 @@ public class SequencerFactory {
 
             case FORWARD_PASS:
                 return new Sequencer(new SequencedItem[] {
-                    new ExtendShoe(),
+                    new FullyExtendShoe(),
                     new ExtendRightSidePiston(),
                     new RetractShooter(),
-                    new RetractShoe()
+                    new FullyRetractShoe()
                 });
 
             case TARGET_SHOT_WITHOUT_RETRACTION:
                 return new Sequencer(new SequencedItem[] {
-                    new ExtendShoe(),
-                    new ExtendThreePistons()
+                    new FullyExtendShoe(),
+                    new ExtendThreePistons(),
+                    new Print("time during shot = ")
                 });
 
+            case MIDRANGE_SHOT_THREE_CYLINDER:
+                return new Sequencer(new SequencedItem[] {
+                    new ExtendShoeLongPiston(),
+                    new ExtendThreePistons(),
+                    new RetractShooter(),
+                    new FullyRetractShoe()
+                });
+
+            case MIDRANGE_SHOT_TWO_CYLINDER:
+                return new Sequencer(new SequencedItem[] {
+                    new ExtendShoeLongPiston(),
+                    new ExtendTwoPistons(),
+                    new RetractShooter(),
+                    new FullyRetractShoe()
+                });
+
+            case OVER_TRUSS_CATCH:
+                return new Sequencer(new SequencedItem[] {
+                    new FullyRetractShoe(),
+                    new ExtendTwoPistons(),
+                    new RetractShooter(),
+                    new FullyRetractShoe()
+                });
 
             default: return new Sequencer(); // return an empty sequence
         }
