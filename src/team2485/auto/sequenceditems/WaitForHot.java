@@ -3,7 +3,6 @@ package team2485.auto.sequenceditems;
 import edu.wpi.first.wpilibj.DriverStation;
 import team2485.Robot;
 import team2485.auto.SequencedItem;
-import team2485.auto.SequencerFactory;
 import team2485.comp.TargetTracker;
 
 /**
@@ -13,9 +12,8 @@ import team2485.comp.TargetTracker;
 public class WaitForHot implements SequencedItem {
     private double duration = 0.1;
     public static final int
-            LEFT     = 1,
-            RIGHT    = 2,
-            IN_FRONT = 4; // center
+            LEFT  = 1,
+            RIGHT = 2;
     private final int sideOfField;
     private double startTime = -1;
 
@@ -27,12 +25,13 @@ public class WaitForHot implements SequencedItem {
         int hot = Robot.tracker.getAutoTrackState();
         if (startTime == -1) startTime = DriverStation.getInstance().getMatchTime();
 
-        if ((hot == TargetTracker.TRACK_LEFT   && sideOfField == LEFT)  ||
-            (hot == TargetTracker.TRACK_RIGHT  && sideOfField == RIGHT) ||
-            (hot == TargetTracker.TRACK_CENTER && sideOfField == IN_FRONT))
+        if ((hot == TargetTracker.TRACK_LEFT  && sideOfField == LEFT) ||
+            (hot == TargetTracker.TRACK_RIGHT && sideOfField == RIGHT)) {
             duration = 0.0;
-        else
+        }
+        else {
             duration = 5.0 - startTime;
+        }
 
         System.out.println("Duration = " + duration);
     }

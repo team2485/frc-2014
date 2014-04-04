@@ -1,6 +1,8 @@
 package team2485.comp;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.wpilibj.tables.ITableListener;
 
 /**
  * Retroreflective target tracker using the Axis camera.
@@ -9,18 +11,21 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
  * @author Bryce Matsumori
  */
 public class TargetTracker {
-    private NetworkTable table;
+    private final NetworkTable table;
     private int autoTrackState = -1;
 
     public static final int
             TRACK_NONE   = 0,
             TRACK_LEFT   = 1,
-            TRACK_RIGHT  = 2,
-            TRACK_BOTH   = 3,
-            TRACK_CENTER = 4;
+            TRACK_RIGHT  = 2;
 
     public TargetTracker() {
         table = NetworkTable.getTable("vision");
+        table.addTableListener("targets", new ITableListener() {
+            public void valueChanged(ITable table, String key, Object value, boolean immediate) {
+                System.out.println("RECEIVED TRACK STATE " + ((Double)value).intValue());
+            }
+        }, true);
     }
 
     /**

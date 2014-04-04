@@ -54,11 +54,11 @@ public class Robot extends IterativeRobot {
 
     public void robotInit() {
         leftEncoder  = new Encoder(13, 14);
-        rightEncoder = new Encoder(12, 11);
+//        rightEncoder = new Encoder(12, 11);
 
-        drive             = new DriveTrain(new Talon(10), new Talon(8), rightEncoder, new Solenoid(5));
-        catapult          = new Catapult(1, 2, 4, 6, 7, new AnalogChannel(2));
-        locator           = new Locator(leftEncoder, rightEncoder, drive);
+        drive             = new DriveTrain(new Talon(10), new Talon(8), leftEncoder, new Solenoid(5));
+        catapult          = new Catapult(1, 2, 4, 6, 8, new AnalogChannel(2));
+//        locator           = new Locator(leftEncoder, rightEncoder, drive);
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(5, 1000));
         catcher           = new Catcher(3);
         errorInAutonomous = false;
@@ -102,14 +102,14 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
         ringLightRelay.set(Relay.Value.kReverse);
         int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_HOT);
-        autoSequence = SequencerFactory.createAuto(autonomousType);
+        autoSequence = SequencerFactory.createAuto(/*autonomousType*/ SequencerFactory.TWO_BALL_NO_HOT);
 
         catapult.reset();
         tracker.resetAutoTrackState();
         drive.resetSensors();
         drive.lowGear();
 
-        locator.setAutoPosition(autonomousType);
+//        locator.setAutoPosition(autonomousType);
 
         ringLightRelay.set(Relay.Value.kReverse);
 
@@ -272,7 +272,7 @@ public class Robot extends IterativeRobot {
         if (Controllers.getJoystickButton(1))
             arm.setSetpoint(IntakeArm.STARTING_CONFIG);
 
-        ringLightRelay.set(Relay.Value.kReverse);
+        ringLightRelay.set(Relay.Value.kForward);
 
         globalPeriodic();
     }
@@ -288,12 +288,16 @@ public class Robot extends IterativeRobot {
             talArmSmart = 0;
         }
         potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
-        SmartDashboard.putString("ArmPot" , IntakeArm.UP_POSITION + "," + potArmSmart);
-        
-        System.out.println("gyro angle = " + drive.getAngle() + " ultrasonic sensor = " + catapult.inCatapult());
+        SmartDashboard.putString("ArmPot" , "" + IntakeArm.UP_POSITION + "," + potArmSmart);
 
-        locator.run();
-        SmartDashboard.putString("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
+        System.out.println("arm val = " + arm.getPotValue());
+
+//        System.out.println("gyro angle = " + drive.getAngle() + " ultrasonic sensor = " + catapult.inCatapult());
+
+        System.out.println("encoder output = " + drive.getEncoderOutput());
+
+//        locator.run();
+//        SmartDashboard.putStrin8g("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
 
         SmartDashboard.putNumber("pressure", pressureTransducer.getPressure());
 

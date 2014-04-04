@@ -45,29 +45,21 @@ public class Locator {
         switch (autoType) {
             case SequencerFactory.NONE:
             case SequencerFactory.FORWARD:
-            case SequencerFactory.FORWARD_TRUSS:
-            case SequencerFactory.FORWARD_CUSTOM:
             case SequencerFactory.TWO_BALL_HOT:
+            case SequencerFactory.THREE_BALL_HOT:
                 x = 0;
                 y = 96; // 9ft - ~1ft = 8ft
                 break;
 
             case SequencerFactory.ONE_BALL_LEFT:
-            case SequencerFactory.ONE_BALL_TRUSS_LEFT:
-            case SequencerFactory.ONE_BALL_FROM_LEFT_TO_CENTER_TRUSS:
-            case SequencerFactory.ONE_BALL_ANGLED_SHOT_LEFT:
-            case SequencerFactory.ONE_BALL_CUSTOM_LEFT:
-            // treat these as left for now
-            case SequencerFactory.THREE_BALL:
+            // assume these are left
             case SequencerFactory.TWO_BALL_NO_HOT:
+            case SequencerFactory.THREE_BALL:
                 x = -72; // -6ft
                 y = 96;
                 break;
 
             case SequencerFactory.ONE_BALL_RIGHT:
-            case SequencerFactory.ONE_BALL_TRUSS_RIGHT:
-            case SequencerFactory.ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS:
-            case SequencerFactory.ONE_BALL_ANGLED_SHOT_RIGHT:
                 x = 72; // 6ft
                 y = 96;
                 break;

@@ -15,7 +15,7 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static final int potSlippage = -570;
+    private static final int potSlippage = -634;
     private boolean rollersOn = false;
 
     public static double
