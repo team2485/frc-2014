@@ -158,10 +158,7 @@ public class Catapult {
 
     public boolean inCatapult() {
         System.out.println("Sonic value " + sonic.getValue());
-        if(sonic.getValue() < 20) // was 25
-            return true;
-        else
-            return false;
+        return sonic.getValue() < 20; // was 25
     }
 
     public boolean shoeShortExtended() {

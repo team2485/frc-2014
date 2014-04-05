@@ -29,8 +29,8 @@ public class DriveTrain {
     private PIDController imuPID;
     private PIDController encPID;
     public static double
-//            kP_G_Rotate = 0.033,
-            kP_G_Rotate = 0.04,
+            kP_G_Rotate = 0.028,
+//            kP_G_Rotate = 0.04,
             kI_G_Rotate = 0.0,
             kD_G_Rotate = 0.0;
     public static double kP_G_Drive, kI_G_Drive, kD_G_Drive;

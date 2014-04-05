@@ -223,12 +223,12 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new FullyExtendShoe(),
                     new MoveArmNoWait(IntakeArm.IN_CATAPULT - 100, false),
-                    new Drive(65),
+                    new Drive(45),
                     new DisableEncoderPID(),
                     new WaitForTarget(),
                     new TurnToTarget(),
                     new DisableIMUPID(),
-                    new SequencedPause(0.1),
+                    new SequencedPause(0.6),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new RetractShooter(),
@@ -247,13 +247,13 @@ public class SequencerFactory {
                         new StopRollers(),
                     }),
                     new SequencedDoubleItem(
-                        new Drive(65),
+                        new Drive(45),
                         new FullyExtendShoe()
                     ),
                     new DisableEncoderPID(),
                     new TurnToOtherTarget(),
                     new DisableIMUPID(),
-                    new SequencedPause(0.1),
+                    new SequencedPause(0.6),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
                     new RetractShooter()
             });

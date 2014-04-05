@@ -101,8 +101,8 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
         ringLightRelay.set(Relay.Value.kReverse);
-        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_HOT);
-        autoSequence = SequencerFactory.createAuto(/*autonomousType*/ SequencerFactory.TWO_BALL_NO_HOT);
+        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_NO_HOT);
+        autoSequence = SequencerFactory.createAuto(autonomousType);
 
         catapult.reset();
         tracker.resetAutoTrackState();
@@ -291,6 +291,9 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putString("ArmPot" , "" + IntakeArm.UP_POSITION + "," + potArmSmart);
 
         System.out.println("arm val = " + arm.getPotValue());
+
+
+        System.out.println("sonic val = " + catapult.inCatapult());
 
 //        System.out.println("gyro angle = " + drive.getAngle() + " ultrasonic sensor = " + catapult.inCatapult());
 

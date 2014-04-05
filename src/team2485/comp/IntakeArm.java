@@ -15,7 +15,7 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static final int potSlippage = -634;
+    private static final int potSlippage = -680;
     private boolean rollersOn = false;
 
     public static double
@@ -161,7 +161,7 @@ public class IntakeArm {
             isPID = false;
 
             // TODO: implement stop
-            if ((speed > 0 && potValue > IN_CATAPULT - 100) || (speed < 0 && potValue < LOW_LIMIT)) {
+            if ((speed > 0 && potValue > IN_CATAPULT + 50) || (speed < 0 && potValue < LOW_LIMIT)) {
                 armMotors.set(0.0);
             } else {
                 // TODO: Find the speeds we want for manual arm movement

@@ -14,8 +14,8 @@ public class TurnToTarget implements SequencedItem {
     public void run() {
         completed = Robot.drive.rotateTo(
             Robot.tracker.getAutoTrackState() == TargetTracker.TRACK_LEFT ?
-            -12 :
-             12); // TRACK_RIGHT or default
+            -15 :
+             15); // TRACK_RIGHT or default
     }
 
     public double duration() {
