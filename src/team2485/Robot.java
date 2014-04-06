@@ -57,7 +57,7 @@ public class Robot extends IterativeRobot {
 //        rightEncoder = new Encoder(12, 11);
 
         drive             = new DriveTrain(new Talon(10), new Talon(8), leftEncoder, new Solenoid(5));
-        catapult          = new Catapult(1, 2, 4, 6, 8, new AnalogChannel(2));
+        catapult          = new Catapult(2, 1, 4, 6, 8, new AnalogChannel(2));
 //        locator           = new Locator(leftEncoder, rightEncoder, drive);
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(5, 1000));
         catcher           = new Catcher(3);
