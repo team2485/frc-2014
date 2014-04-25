@@ -20,6 +20,6 @@ public class ExtendThreePistons implements SequencedItem {
 
 //        return 0.7;
 
-        return 1;
+        return 0.9;
     }
 }

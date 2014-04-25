@@ -143,8 +143,7 @@ public class Catapult {
     }
 
     public void extendShoeShortPiston() {
-        setShoeState(
-                SHORT_EXTENDED);
+        setShoeState(SHORT_EXTENDED);
     }
 
     /**

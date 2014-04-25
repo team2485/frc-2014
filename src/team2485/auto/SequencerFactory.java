@@ -104,19 +104,17 @@ public class SequencerFactory {
             case ONE_BALL_LEFT:
             case ONE_BALL_RIGHT:
                 return new Sequencer(new SequencedItem[] {
-                    new SequencedDoubleItem(
-                        new SequencedPause(MARTY_WAIT_TIME), // wait until the marty has shown card
-                        new MoveArmNoWait(IntakeArm.IN_CATAPULT - 150)
-                    ),
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new WaitForHot(type == ONE_BALL_LEFT ? WaitForHot.LEFT : WaitForHot.RIGHT),
+                        new SequencedPause(MARTY_WAIT_TIME), // wait until the marty has shown card
+                        new MoveArmNoWait(IntakeArm.IN_CATAPULT - 150),
                         new FullyExtendShoe(),
-                        new Drive(75)
+                        new Drive(45),
                     }),
                     new WaitForTarget(),
+                    new SequencedPause(0.7),
+                    new WaitForHot(type == ONE_BALL_LEFT ? WaitForHot.LEFT : WaitForHot.RIGHT),
                     new DisableArmPID(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-//                    new Drive(50)
                 });
 
             // <editor-fold defaultstate="collapsed" desc="Old Sequences">
