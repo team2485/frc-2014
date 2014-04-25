@@ -8,8 +8,8 @@ import team2485.auto.SequencedItem;
  * @author Marty Kausas
  */
 public class SetHighGear implements SequencedItem {
-
     private boolean hasRun;
+
     public void run() {
         if (!hasRun) {
             Robot.drive.highGear();
@@ -20,6 +20,4 @@ public class SetHighGear implements SequencedItem {
     public double duration() {
         return hasRun ? 0 : 0.5;
     }
-
-
 }

@@ -18,10 +18,10 @@ public class IntakeArm {
     private static final int potSlippage = -285; //TODO fix on Odin -670
     private boolean rollersOn = false;
 
-    public static double
+    public double
             kP = 0.01,
-            kI = 0,
-            kD = 0;
+            kI = 0.0,
+            kD = 0.0;
 
     private double potValue;
     private boolean isPID = false;

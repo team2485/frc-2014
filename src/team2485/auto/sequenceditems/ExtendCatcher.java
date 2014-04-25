@@ -8,7 +8,6 @@ import team2485.auto.SequencedItem;
  * @author W.A.R.Lords
  */
 public class ExtendCatcher implements SequencedItem {
-
     private boolean hasRun = false;
 
     public void run() {
@@ -19,5 +18,4 @@ public class ExtendCatcher implements SequencedItem {
     public double duration() {
         return hasRun ? 0 : 1;
     }
-
 }

@@ -13,9 +13,14 @@ import team2485.auto.SequencerFactory;
  * @author Marty Kausas
  */
 public class Catapult {
+    public static int FULLY_RETRACTED   = 1,
+            SHORT_EXTENDED              = 2,
+            LONG_EXTENDED               = 3,
+            FULLY_EXTENDED              = 4;
+
+    private int currentShoeState = 1;
 
     private Solenoid
-            solenoid3,
             solenoidShoeShort,
             solenoidShoeLong,
             solenoidBoot;
@@ -24,43 +29,37 @@ public class Catapult {
             centerSolenoid,
             sideSolenoids;
 
-
-    public int CURRENT_SHOE_STATE  = 1;
-    public static int FULLY_RETRACTED   = 1,
-            SHORT_EXTENDED              = 2,
-            LONG_EXTENDED               = 3,
-            FULLY_EXTENDED              = 4;
-
-
-
     private Sequencer shootSequencer;
     private AnalogChannel sonic;
 
     /**
      * Constructor using {@code Solenoid} objects
      *
-     * @param solenoidLeft
+     * @param sideSolenoids
      * @param solenoidMiddle
-     * @param solenoidRight
-     * @param solenoidShoeAdjuster
+     * @param solenoidShoeAdjuster1
+     * @param solenoidShoeAdjuster2
      * @param solenoidBoot
+     * @param sonic
      */
     public Catapult(Relay sideSolenoids, Relay solenoidMiddle, Solenoid solenoidShoeAdjuster1, Solenoid solenoidShoeAdjuster2, Solenoid solenoidBoot, AnalogChannel sonic) {
-        this.sideSolenoids          = sideSolenoids;
-        this.centerSolenoid         = solenoidMiddle;
-        this.solenoidShoeShort      = solenoidShoeAdjuster1;
-        this.solenoidShoeLong       = solenoidShoeAdjuster2;
-        this.solenoidBoot           = solenoidBoot;
-        this.sonic                  = sonic;
+        this.sideSolenoids     = sideSolenoids;
+        this.centerSolenoid    = solenoidMiddle;
+        this.solenoidShoeShort = solenoidShoeAdjuster1;
+        this.solenoidShoeLong  = solenoidShoeAdjuster2;
+        this.solenoidBoot      = solenoidBoot;
+        this.sonic             = sonic;
     }
 
     /**
      * Constructs a new Catapult using parameter solenoid ports
      *
-     * @param solenoidLeftPort
+     * @param sideSolenoids
      * @param solenoidMiddlePort
-     * @param solenoidRightPort
-     * @param solenoidShoeAdjusterPort
+     * @param solenoidShoeAdjusterPort1
+     * @param solenoidShoeAdjusterPort2
+     * @param solenoidBoot
+     * @param sonic
      */
     public Catapult(int sideSolenoids, int solenoidMiddlePort, int solenoidShoeAdjusterPort1, int solenoidShoeAdjusterPort2, int solenoidBoot, AnalogChannel sonic) {
         this(new Relay(sideSolenoids), new Relay(solenoidMiddlePort), new Solenoid(solenoidShoeAdjusterPort1), new Solenoid(solenoidShoeAdjusterPort2), new Solenoid(solenoidBoot), sonic);
@@ -68,7 +67,7 @@ public class Catapult {
 
     /**
      *
-     * @param shotConstant
+     * @param shotType
      */
     public void shoot(int shotType) {
         if (shootSequencer == null) {
@@ -181,10 +180,10 @@ public class Catapult {
 
     public void setShoeState(int state) {
         if (state < FULLY_RETRACTED || state > FULLY_EXTENDED) {
-            ; // do nothing
+            // do nothing
         } else {
-            CURRENT_SHOE_STATE = state;
-            switch (CURRENT_SHOE_STATE) {
+            currentShoeState = state;
+            switch (currentShoeState) {
                 // fully retracted
                 case 1:
                     solenoidShoeShort.set(false);
@@ -210,6 +209,6 @@ public class Catapult {
     }
 
     public int getShoeState() {
-        return CURRENT_SHOE_STATE;
+        return currentShoeState;
     }
 }

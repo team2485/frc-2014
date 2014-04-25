@@ -209,10 +209,10 @@ public class Robot extends IterativeRobot {
 
         if (!prevOperatorBtn14 && Controllers.getG13OrJoyButton(14))
 //            catapult.extendShoeFull();
-            catapult.setShoeState(catapult.CURRENT_SHOE_STATE + 1);
+            catapult.setShoeState(catapult.getShoeState() + 1);
         if (!prevOperatorBtn13 && Controllers.getG13OrJoyButton(13))
 //            catapult.retractShoeFull();
-            catapult.setShoeState(catapult.CURRENT_SHOE_STATE - 1);
+            catapult.setShoeState(catapult.getShoeState() - 1);
 
         prevOperatorBtn13 = Controllers.getG13OrJoyButton(13);
         prevOperatorBtn14 = Controllers.getG13OrJoyButton(14);

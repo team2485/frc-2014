@@ -8,7 +8,6 @@ import team2485.auto.SequencedItem;
  * @author MK
  */
 public class DisableIMUPID implements SequencedItem {
-
     private boolean hasRun;
 
     public void run() {

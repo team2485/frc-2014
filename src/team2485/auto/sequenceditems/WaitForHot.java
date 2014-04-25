@@ -10,11 +10,12 @@ import team2485.comp.TargetTracker;
  * @author W.A.R.Lords
  */
 public class WaitForHot implements SequencedItem {
-    private double duration = 0.1;
     public static final int
             LEFT  = 1,
             RIGHT = 2;
+
     private final int sideOfField;
+    private double duration = 0.1;
     private double startTime = -1;
 
     public WaitForHot(int sideOfField) {

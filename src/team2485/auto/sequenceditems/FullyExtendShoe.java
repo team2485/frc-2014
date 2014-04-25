@@ -2,7 +2,6 @@ package team2485.auto.sequenceditems;
 
 import team2485.Robot;
 import team2485.auto.SequencedItem;
-import team2485.auto.SequencerFactory;
 import team2485.comp.Catapult;
 
 /**
@@ -10,7 +9,6 @@ import team2485.comp.Catapult;
  * @author Marty
  */
 public class FullyExtendShoe implements SequencedItem {
-
     private boolean initialCheck = true;
     private double duration;
 
@@ -24,9 +22,7 @@ public class FullyExtendShoe implements SequencedItem {
     }
 
     public double duration() {
-       if(Robot.errorInAutonomous)
-            return 0;
-
+       if (Robot.errorInAutonomous) return 0;
         return duration;
     }
 }

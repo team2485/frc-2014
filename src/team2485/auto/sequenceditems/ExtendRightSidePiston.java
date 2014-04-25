@@ -2,7 +2,6 @@ package team2485.auto.sequenceditems;
 
 import team2485.Robot;
 import team2485.auto.SequencedItem;
-import team2485.auto.SequencerFactory;
 
 /**
  *
@@ -15,10 +14,7 @@ public class ExtendRightSidePiston implements SequencedItem {
     }
 
     public double duration() {
-        if(Robot.errorInAutonomous)
-            return 0;
-
+        if (Robot.errorInAutonomous) return 0;
         return 0.5;
     }
-
 }

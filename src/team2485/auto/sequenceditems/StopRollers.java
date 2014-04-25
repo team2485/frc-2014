@@ -8,7 +8,6 @@ import team2485.auto.SequencedItem;
  * @author W.A.R.Lords
  */
 public class StopRollers implements SequencedItem {
-
     private boolean hasRun = false;
 
     public void run() {
@@ -17,10 +16,7 @@ public class StopRollers implements SequencedItem {
     }
 
     public double duration() {
-        if(Robot.errorInAutonomous)
-            return 0;
-        
+        if (Robot.errorInAutonomous) return 0;
         return hasRun ? 0 : Integer.MAX_VALUE;
     }
-
 }

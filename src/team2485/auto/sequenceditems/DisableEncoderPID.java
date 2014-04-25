@@ -8,7 +8,6 @@ import team2485.auto.SequencedItem;
  * @author MK
  */
 public class DisableEncoderPID implements SequencedItem {
-
     private boolean hasRun;
 
     public void run() {

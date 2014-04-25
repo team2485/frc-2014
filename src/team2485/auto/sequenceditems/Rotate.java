@@ -9,9 +9,8 @@ import team2485.auto.SequencedItem;
  * @author Marty Kausas
  */
 public class Rotate implements SequencedItem {
-
+    private final double angle;
     private boolean done = false;
-    private double angle;
 
     /**
      * Rotate to the specified angle, in degrees.

@@ -15,5 +15,4 @@ public class WaitForBallToLeave implements SequencedItem {
     public double duration() {
         return Robot.catapult.inCatapult() ? Integer.MAX_VALUE : 0;
     }
-
 }

@@ -9,14 +9,12 @@ import team2485.comp.Catapult;
  * @author W.A.R.Lords
  */
 public class ExtendShoeLongPiston implements SequencedItem {
-
     private boolean initialCheck = true;
     private double duration;
 
     public void run() {
         if (initialCheck) {
             duration = Robot.catapult.getShoeState() == Catapult.SHORT_EXTENDED ? 0 : 0.55;
-
             initialCheck = false;
         }
 
@@ -24,9 +22,7 @@ public class ExtendShoeLongPiston implements SequencedItem {
     }
 
     public double duration() {
-       if(Robot.errorInAutonomous)
-            return 0;
-
+        if (Robot.errorInAutonomous) return 0;
         return duration;
     }
 }

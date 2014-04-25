@@ -13,7 +13,6 @@ public class WaitForTarget implements SequencedItem {
 
     public void run() {
         found = Robot.tracker.isConnected() && Robot.tracker.getTrackState() != TargetTracker.TRACK_NONE;
-
         if (found) Robot.tracker.setAutoTrackState();
 
         System.out.println("found in wait for target detection = " + found + " tracker auto state " + Robot.tracker.getAutoTrackState());

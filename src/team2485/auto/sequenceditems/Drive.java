@@ -9,8 +9,7 @@ import team2485.auto.SequencedItem;
  * @author Marty Kausas
  */
 public class Drive implements SequencedItem {
-
-    private double distance;
+    private final double distance;
     private boolean done = false;
 
     /**
