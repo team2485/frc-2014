@@ -57,7 +57,8 @@ public class SequencerFactory {
             TARGET_SHOT_WITHOUT_RETRACTION  = 5,
             MIDRANGE_SHOT_THREE_CYLINDER    = 6,
             MIDRANGE_SHOT_TWO_CYLINDER      = 7,
-            OVER_TRUSS_CATCH                = 8;
+            OVER_TRUSS_CATCH                = 8,
+            BLOOP_SHOT                      = 9;
 
     public static final double TARGET_FLIP_PAUSE_TIME = 0.2, MARTY_WAIT_TIME = 1.8;
     public static final double RETRACT_EXTEND_TIME = 0.7; // TODO: figure out duration
@@ -107,11 +108,15 @@ public class SequencerFactory {
                         new SequencedPause(MARTY_WAIT_TIME), // wait until the marty has shown card
                         new MoveArmNoWait(IntakeArm.IN_CATAPULT - 150)
                     ),
+                    new SequencedMultipleItem(new SequencedItem[] {
+                        new WaitForHot(type == ONE_BALL_LEFT ? WaitForHot.LEFT : WaitForHot.RIGHT),
+                        new FullyExtendShoe(),
+                        new Drive(75)
+                    }),
                     new WaitForTarget(),
-                    new WaitForHot(type == ONE_BALL_LEFT ? WaitForHot.LEFT : WaitForHot.RIGHT),
                     new DisableArmPID(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-                    new Drive(50)
+//                    new Drive(50)
                 });
 
             // <editor-fold defaultstate="collapsed" desc="Old Sequences">
@@ -213,7 +218,7 @@ public class SequencerFactory {
                         new RetractShooter(),
                         new WaitForBallToLeave(),
                         new FullyRetractShoe(),
-                        new Drive(60)
+                        new Drive(65)
                     }),
                     new DisableEncoderPID()
             });
@@ -247,7 +252,7 @@ public class SequencerFactory {
                         new StopRollers(),
                     }),
                     new SequencedDoubleItem(
-                        new Drive(45),
+                        new Drive(50),
                         new FullyExtendShoe()
                     ),
                     new DisableEncoderPID(),
@@ -556,6 +561,13 @@ public class SequencerFactory {
                     new ExtendTwoPistons(),
                     new RetractShooter(),
                     new FullyRetractShoe()
+                });
+
+            case BLOOP_SHOT:
+                return new Sequencer(new SequencedItem[] {
+                    new FullyRetractShoe(),
+                    new ExtendOnePiston(),
+                    new RetractShooter(),
                 });
 
             default: return new Sequencer(); // return an empty sequence

@@ -48,8 +48,8 @@ public class Robot extends IterativeRobot {
     // WPI Classes
     private Compressor compressor;
 
-    private Relay ringLightRelay;
-    private LightController lightController;
+//    private Relay ringLightRelay;
+//    private LightController lightController;
     private PressureTransducer pressureTransducer;
 
     public void robotInit() {
@@ -57,12 +57,12 @@ public class Robot extends IterativeRobot {
 //        rightEncoder = new Encoder(12, 11);
 
         drive             = new DriveTrain(new Talon(10), new Talon(8), leftEncoder, new Solenoid(5));
-        catapult          = new Catapult(2, 1, 4, 6, 8, new AnalogChannel(2));
+        catapult          = new Catapult(8, 7, 4, 6, 8, new AnalogChannel(2));
 //        locator           = new Locator(leftEncoder, rightEncoder, drive);
-        arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(5, 1000));
+        arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(6, 1000));
         catcher           = new Catcher(3);
         errorInAutonomous = false;
-        lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
+//        lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
 
 
         try {
@@ -92,7 +92,7 @@ public class Robot extends IterativeRobot {
         pid = NetworkTable.getTable("PID");
 
         compressor = new Compressor(1, 1);
-        ringLightRelay = new Relay(8);
+//        ringLightRelay = new Relay(8);
         tracker    = new TargetTracker();
         pressureTransducer = new PressureTransducer(3);
 
@@ -100,8 +100,8 @@ public class Robot extends IterativeRobot {
     }
 
     public void autonomousInit() {
-        ringLightRelay.set(Relay.Value.kReverse);
-        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_NO_HOT);
+//        ringLightRelay.set(Relay.Value.kReverse);
+        int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_HOT);
         autoSequence = SequencerFactory.createAuto(autonomousType);
 
         catapult.reset();
@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
 
 //        locator.setAutoPosition(autonomousType);
 
-        ringLightRelay.set(Relay.Value.kReverse);
+//        ringLightRelay.set(Relay.Value.kReverse);
 
 //        drive.kP_G_Rotate = pid.getNumber("P_Gyro_Rotate");
 //        drive.kI_G_Rotate = pid.getNumber("I_Gyro_Rotate");
@@ -130,13 +130,13 @@ public class Robot extends IterativeRobot {
         autoSequence.run();
         globalPeriodic();
 
-        lightController.send(LightController.HAPPY_RAINBOW);
+//        lightController.send(LightController.HAPPY_RAINBOW);
     }
 
     public void teleopInit() {
         errorInAutonomous = false;
 
-        ringLightRelay.set(Relay.Value.kOff);
+//        ringLightRelay.set(Relay.Value.kOff);
 
         catapult.reset();
         arm.stopRollers();
@@ -197,11 +197,14 @@ public class Robot extends IterativeRobot {
                 catapult.shoot(SequencerFactory.MIDRANGE_SHOT_THREE_CYLINDER);
             } else if (Controllers.getJoystickButton(10)) {
                 catapult.shoot(SequencerFactory.OVER_TRUSS_CATCH);
+            } else if (Controllers.getJoystickButton(6)) {
+                catapult.shoot(SequencerFactory.BLOOP_SHOT);
+            }
 //                lightController.send(LightController.RAINBOW_CHASE);
 //            } else if (Controllers.getG13OrJoyButton(4)) {
 //                catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
 //                lightController.send(LightController.RAINBOW_CHASE);
-            }
+//            }
         }
 
         if (!prevOperatorBtn14 && Controllers.getG13OrJoyButton(14))
@@ -263,7 +266,7 @@ public class Robot extends IterativeRobot {
         arm.run();
         catapult.run();
         globalPeriodic();
-        lightController.send(LightController.HAPPY_RAINBOW);
+//        lightController.send(LightController.HAPPY_RAINBOW);
     }
 
     public void testPeriodic() {
@@ -272,7 +275,7 @@ public class Robot extends IterativeRobot {
         if (Controllers.getJoystickButton(1))
             arm.setSetpoint(IntakeArm.STARTING_CONFIG);
 
-        ringLightRelay.set(Relay.Value.kForward);
+//        ringLightRelay.set(Relay.Value.kForward);
 
         globalPeriodic();
     }
@@ -293,11 +296,11 @@ public class Robot extends IterativeRobot {
         System.out.println("arm val = " + arm.getPotValue());
 
 
-        System.out.println("sonic val = " + catapult.inCatapult());
-
-//        System.out.println("gyro angle = " + drive.getAngle() + " ultrasonic sensor = " + catapult.inCatapult());
-
-        System.out.println("encoder output = " + drive.getEncoderOutput());
+//        System.out.println("sonic val = " + catapult.inCatapult());
+//
+//        System.out.println("gyro angle = " + drive.getAngle());
+//
+//        System.out.println("encoder output = " + drive.getEncoderOutput());
 
 //        locator.run();
 //        SmartDashboard.putStrin8g("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");

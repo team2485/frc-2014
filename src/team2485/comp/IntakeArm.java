@@ -15,7 +15,7 @@ public class IntakeArm {
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static final int potSlippage = -670;
+    private static final int potSlippage = -285; //TODO fix on Odin -670
     private boolean rollersOn = false;
 
     public static double

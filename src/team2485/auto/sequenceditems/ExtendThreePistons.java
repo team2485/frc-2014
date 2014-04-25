@@ -18,6 +18,8 @@ public class ExtendThreePistons implements SequencedItem {
         if(Robot.errorInAutonomous)
             return 0;
 
-        return 0.4;
+//        return 0.7;
+
+        return 1;
     }
 }

@@ -1,6 +1,7 @@
 package team2485.comp;
 
 import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import team2485.auto.Sequencer;
 import team2485.auto.SequencerFactory;
@@ -14,12 +15,15 @@ import team2485.auto.SequencerFactory;
 public class Catapult {
 
     private Solenoid
-            sideSolenoids,
-            centerSolenoid,
             solenoid3,
             solenoidShoeShort,
             solenoidShoeLong,
             solenoidBoot;
+
+    private Relay
+            centerSolenoid,
+            sideSolenoids;
+
 
     public int CURRENT_SHOE_STATE  = 1;
     public static int FULLY_RETRACTED   = 1,
@@ -41,7 +45,7 @@ public class Catapult {
      * @param solenoidShoeAdjuster
      * @param solenoidBoot
      */
-    public Catapult(Solenoid sideSolenoids, Solenoid solenoidMiddle, Solenoid solenoidShoeAdjuster1, Solenoid solenoidShoeAdjuster2, Solenoid solenoidBoot, AnalogChannel sonic) {
+    public Catapult(Relay sideSolenoids, Relay solenoidMiddle, Solenoid solenoidShoeAdjuster1, Solenoid solenoidShoeAdjuster2, Solenoid solenoidBoot, AnalogChannel sonic) {
         this.sideSolenoids          = sideSolenoids;
         this.centerSolenoid         = solenoidMiddle;
         this.solenoidShoeShort      = solenoidShoeAdjuster1;
@@ -59,7 +63,7 @@ public class Catapult {
      * @param solenoidShoeAdjusterPort
      */
     public Catapult(int sideSolenoids, int solenoidMiddlePort, int solenoidShoeAdjusterPort1, int solenoidShoeAdjusterPort2, int solenoidBoot, AnalogChannel sonic) {
-        this(new Solenoid(sideSolenoids), new Solenoid(solenoidMiddlePort), new Solenoid(solenoidShoeAdjusterPort1), new Solenoid(solenoidShoeAdjusterPort2), new Solenoid(solenoidBoot), sonic);
+        this(new Relay(sideSolenoids), new Relay(solenoidMiddlePort), new Solenoid(solenoidShoeAdjusterPort1), new Solenoid(solenoidShoeAdjusterPort2), new Solenoid(solenoidBoot), sonic);
     }
 
     /**
@@ -82,37 +86,37 @@ public class Catapult {
      * Extends the center catapult piston
      */
     public void extendOne() {
-        sideSolenoids.set(false);
-        centerSolenoid.set(true);
+        sideSolenoids.set(Relay.Value.kOff);
+        centerSolenoid.set(Relay.Value.kForward);
     }
 
     /**
      * Extends the left and right catapult pistons
      */
     public void extendTwo() {
-        sideSolenoids.set(true);
-        centerSolenoid.set(false);
+        sideSolenoids.set(Relay.Value.kOn);
+        centerSolenoid.set(Relay.Value.kOff);
     }
 
     /**
      * Extends all three catapult pistons
      */
     public void extendThree() {
-        sideSolenoids.set(true);
-        centerSolenoid.set(true);
+        sideSolenoids.set(Relay.Value.kOn);
+        centerSolenoid.set(Relay.Value.kForward);
     }
 
     public void extendRightPiston() {
-        sideSolenoids.set(false);
-        centerSolenoid.set(false);
+        sideSolenoids.set(Relay.Value.kOff);
+        centerSolenoid.set(Relay.Value.kForward);
     }
 
     /**
      * Retracts all three catapult pistons
      */
     public void retract() {
-        sideSolenoids.set(false);
-        centerSolenoid.set(false);
+        sideSolenoids.set(Relay.Value.kOff);
+        centerSolenoid.set(Relay.Value.kOff);
     }
 
     public void toggleShoe() {
@@ -139,7 +143,8 @@ public class Catapult {
     }
 
     public void extendShoeShortPiston() {
-        setShoeState(SHORT_EXTENDED);
+        setShoeState(
+                SHORT_EXTENDED);
     }
 
     /**
