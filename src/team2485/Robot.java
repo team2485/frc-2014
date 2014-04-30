@@ -222,9 +222,9 @@ public class Robot extends IterativeRobot {
         if (Controllers.getJoystickButton(4)) {
             arm.setSetpoint(IntakeArm.IN_CATAPULT);
 //            lightController.send(LightController.RAINBOW_CYCLE);
-        } else if (Controllers.getJoystickButton(6))
-            arm.setSetpoint(IntakeArm.UP_POSITION);
-        else if (Controllers.getJoystickButton(9)) {
+//        } else if (Controllers.getJoystickButton(6))
+//            arm.setSetpoint(IntakeArm.UP_POSITION);
+        } else if (Controllers.getJoystickButton(9)) {
             arm.setSetpoint(IntakeArm.PICKUP);
 //            lightController.send(LightController.GOLD_CHASE);
         }

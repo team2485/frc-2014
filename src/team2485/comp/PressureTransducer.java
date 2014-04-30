@@ -21,6 +21,6 @@ public class PressureTransducer extends AnalogChannel {
      * @return PSI
      */
     public double getPressure() {
-        return (super.getValue() * -4.7707) + 1938.5;
+        return (super.getValue() * -2.6243) + 1102.6;
     }
 }

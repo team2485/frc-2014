@@ -115,6 +115,8 @@ public class SequencerFactory {
                     new WaitForHot(type == ONE_BALL_LEFT ? WaitForHot.LEFT : WaitForHot.RIGHT),
                     new DisableArmPID(),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
+                    new SequencedPause(1),
+                    new Drive(60)
                 });
 
             // <editor-fold defaultstate="collapsed" desc="Old Sequences">
