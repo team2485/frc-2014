@@ -3,6 +3,12 @@ package team2485.comp;
 import edu.wpi.first.wpilibj.Encoder;
 import team2485.auto.SequencerFactory;
 
+/**
+ * Keeps track of where we are on the field.
+ * It uses the drive encoders to calculate the distance the robot has traveled, and its orientation.
+ *
+ * @author Bryce
+ */
 public class Locator {
     private final Encoder leftEncoder;
     private final Encoder rightEncoder;

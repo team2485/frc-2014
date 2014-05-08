@@ -10,12 +10,11 @@ import edu.wpi.first.wpilibj.Talon;
  * @author Anoushka Bose
  */
 public class IntakeArm {
-
     private Talon armMotors, rollerMotors;
 
     private PIDController armPID;
     private AnalogPotentiometer pot;
-    private static final int potSlippage = -285; //TODO fix on Odin -670
+    private static final int POT_SLIPPAGE = -285;
     private boolean rollersOn = false;
 
     public double
@@ -26,18 +25,16 @@ public class IntakeArm {
     private double potValue;
     private boolean isPID = false;
 
-    // TODO: Find these setpoints
+    // Setpoints
     public static final double
-            IN_CATAPULT      = 2975 + potSlippage,
-            UP_POSITION      = 2390 + potSlippage,
-            FORTYFIVE_UP     = 2524 + potSlippage,
-            PICKUP           = 2831 + potSlippage,
-            POPPER_POSITION  = 2017 + potSlippage,
-            LOW_LIMIT        = 1951 + potSlippage,
-            DEFENSE          = 2059 + potSlippage,
-            STARTING_CONFIG  = 2331 + potSlippage;
-
-    // all the way down 2475
+            IN_CATAPULT      = 2975 + POT_SLIPPAGE,
+            UP_POSITION      = 2390 + POT_SLIPPAGE,
+            FORTYFIVE_UP     = 2524 + POT_SLIPPAGE,
+            PICKUP           = 2831 + POT_SLIPPAGE,
+            POPPER_POSITION  = 2017 + POT_SLIPPAGE,
+            LOW_LIMIT        = 1951 + POT_SLIPPAGE,
+            DEFENSE          = 2059 + POT_SLIPPAGE,
+            STARTING_CONFIG  = 2331 + POT_SLIPPAGE;
 
     private double currentSetpoint = UP_POSITION;
     public static final double ROLLERS_FORWARD = -1.0, ROLLERS_REVERSE = -ROLLERS_FORWARD;
@@ -73,13 +70,6 @@ public class IntakeArm {
         this(new Talon(rollerMotorChannel), new Talon(armMotorChannel), new AnalogPotentiometer(potChannel));
     }
 
-//    public void toggleRollers() {
-//        if (rollersOn)
-//            startRollers(ROLLERS_FORWARD);
-//        else
-//            stopRollers();
-//    }
-
     /**
      * Starts rollers on intake arm
      * @param value
@@ -100,7 +90,6 @@ public class IntakeArm {
     public double getPotValue() {
         return pot.get();
     }
-
 
     /**
      * Sets PID values
@@ -137,9 +126,9 @@ public class IntakeArm {
 
         isPID = true;
 
-        if (!armPID.onTarget()) {
+        if (!armPID.onTarget())
             armPID.enable();
-        } else
+        else
             armPID.disable();
 
         if (currentSetpoint == PICKUP && rollersOn) {
@@ -160,11 +149,9 @@ public class IntakeArm {
             currentSetpoint = armPID.getSetpoint();
             isPID = false;
 
-            // TODO: implement stop
             if ((speed > 0 && potValue > IN_CATAPULT + 50) || (speed < 0 && potValue < LOW_LIMIT)) {
                 armMotors.set(0.0);
             } else {
-                // TODO: Find the speeds we want for manual arm movement
                 armMotors.set(speed);
             }
         } else if (!armPID.isEnable()) {
@@ -178,10 +165,6 @@ public class IntakeArm {
      */
     public void run() {
         potValue = pot.get();
-
-//        if (armPID.getSetpoint() == IN_CATAPULT && potValue > IN_CATAPULT - 50)
-//            if (rollersOn)
-//                stopRollers();
 
         if (armPID.getSetpoint() == IN_CATAPULT && potValue > IN_CATAPULT - 100) {
             stopRollers();
@@ -212,5 +195,4 @@ public class IntakeArm {
     public void disableArmPID() {
         armPID.disable();
     }
-
 }

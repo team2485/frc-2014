@@ -2,14 +2,14 @@ package team2485.auto;
 
 /**
  * Runs a {@code Sequencer} in a separate {@code Thread}.
- * 
+ *
  * Sequencers by themselves don't run continuously, so a thread like this one
  * is needed to continuously execute the sequence.
- * 
+ *
  * @author Bryce Matsumori
  */
 public class SequenceRunner extends Thread {
-    private Sequencer sequencer;
+    private final Sequencer sequencer;
     private long intervalMillis;
     private boolean finished = false, stopped = false;
 
@@ -30,7 +30,7 @@ public class SequenceRunner extends Thread {
     public void run() {
         finished = false;
         stopped  = false;
-        
+
         // continue until finished (returns true)
         while (!stopped && !sequencer.run()) {
             try {
@@ -48,7 +48,7 @@ public class SequenceRunner extends Thread {
     public Sequencer getSequencer() {
         return sequencer;
     }
-    
+
     /**
      * Gets the interval between {@code Sequencer.run()}s.
      * @return the interval, in seconds
@@ -56,7 +56,7 @@ public class SequenceRunner extends Thread {
     public double getInterval() {
         return intervalMillis * 0.001;
     }
-    
+
     /**
      * Sets the interval between {@code Sequencer.run()}s.
      * @param interval the interval, in seconds
@@ -64,7 +64,7 @@ public class SequenceRunner extends Thread {
     public void setInterval(double interval) {
         this.intervalMillis = (long)(interval * 1000);
     }
-    
+
     /**
      * Stops the {@code SequenceRunner} elegantly.
      */

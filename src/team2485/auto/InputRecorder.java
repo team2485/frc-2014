@@ -11,7 +11,7 @@ import team2485.util.Controllers.ControllerDataDump;
 public class InputRecorder {
     private boolean running = false;
     private long interval   = 10;
-    private Vector data     = new Vector();
+    private final Vector data = new Vector();
 
     /**
      * Initializes a new input recorder with the specified interval.
@@ -20,7 +20,7 @@ public class InputRecorder {
     public InputRecorder(int interval) {
         this.interval = interval;
     }
-    
+
     /**
      * Starts the input recording thread. The thread runs until {@code stop()}
      * is executed.
@@ -38,7 +38,7 @@ public class InputRecorder {
     public void stop() {
         running = false;
     }
-    
+
     /**
      * Gets the data recorded so far.
      * @return an array containing the data
@@ -48,7 +48,7 @@ public class InputRecorder {
         data.copyInto(dumps);
         return dumps;
     }
-    
+
     /**
      * Gets the recorded controller data at the specified snapshot index.
      * @param index the index
@@ -57,7 +57,7 @@ public class InputRecorder {
     public ControllerDataDump getDumpAt(int index) {
         return (ControllerDataDump)data.elementAt(index);
     }
-    
+
     /**
      * Gets the interval between data snapshots.
      * @return the interval, in milliseconds
@@ -65,7 +65,7 @@ public class InputRecorder {
     public long getInterval() {
         return interval;
     }
-    
+
     /**
      * Sets the interval between data snapshots.
      * @param value the interval, in milliseconds

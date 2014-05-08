@@ -9,7 +9,7 @@ import java.util.Vector;
  * @see SequencedItem
  */
 public class Sequencer {
-    private Vector sequenced = new Vector();
+    private final Vector sequenced = new Vector();
     private boolean started = false;
     private long startTime;
     private int currIndex;

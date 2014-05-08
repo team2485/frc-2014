@@ -3,7 +3,6 @@ package team2485;
 import com.kauailabs.nav6.frc.BufferingSerialPort;
 import com.kauailabs.nav6.frc.IMU;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.visa.VisaException;
 import team2485.auto.*;
@@ -21,9 +20,8 @@ import team2485.util.Controllers;
  * @author Mike Maunu
  */
 public class Robot extends IterativeRobot {
-
-    // forward pass = two cylinders choked
-    // midrange shot long extended
+    private static final byte IMU_UPDATE_RATE = 30;
+    private static final boolean USE_G13 = false;
 
     // Subsystems
     public static DriveTrain drive;
@@ -31,26 +29,18 @@ public class Robot extends IterativeRobot {
     public static IntakeArm arm;
     public static Catcher catcher;
     public static TargetTracker tracker;
-    public static IMU imu;
-    private final static byte IMU_UPDATE_RATE = 30;
-    public static Encoder leftEncoder, rightEncoder;
     public static Locator locator;
-    public static boolean errorInAutonomous;
-    public int potArmSmart; // Variable for the smartdashboard output for the potentiometer value and the rollers
-    public int talArmSmart; // Variable for the smartdashboard output for whether the motor is running
-
-    private static final boolean USE_G13 = false;
-
-    private NetworkTable pid;
-
-    private Sequencer autoSequence;
-
-    // WPI Classes
-    private Compressor compressor;
-
-//    private Relay ringLightRelay;
 //    private LightController lightController;
+
+    public static IMU imu;
+    private Compressor compressor;
     private PressureTransducer pressureTransducer;
+    private Encoder leftEncoder, rightEncoder;
+
+    // Autonomous
+    private Sequencer autoSequence;
+    public static boolean errorInAutonomous;
+
 
     public void robotInit() {
         leftEncoder  = new Encoder(13, 14);
@@ -63,7 +53,6 @@ public class Robot extends IterativeRobot {
         catcher           = new Catcher(3);
         errorInAutonomous = false;
 //        lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
-
 
         try {
             imu = new IMU(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
@@ -89,10 +78,7 @@ public class Robot extends IterativeRobot {
             }, "IMU Connect").start();
         }
 
-        pid = NetworkTable.getTable("PID");
-
         compressor = new Compressor(1, 1);
-//        ringLightRelay = new Relay(8);
         tracker    = new TargetTracker();
         pressureTransducer = new PressureTransducer(3);
 
@@ -100,7 +86,6 @@ public class Robot extends IterativeRobot {
     }
 
     public void autonomousInit() {
-//        ringLightRelay.set(Relay.Value.kReverse);
         int autonomousType = (int) SmartDashboard.getNumber("autoMode", SequencerFactory.TWO_BALL_HOT);
         autoSequence = SequencerFactory.createAuto(autonomousType);
 
@@ -110,20 +95,6 @@ public class Robot extends IterativeRobot {
         drive.lowGear();
 
 //        locator.setAutoPosition(autonomousType);
-
-//        ringLightRelay.set(Relay.Value.kReverse);
-
-//        drive.kP_G_Rotate = pid.getNumber("P_Gyro_Rotate");
-//        drive.kI_G_Rotate = pid.getNumber("I_Gyro_Rotate");
-//        drive.kD_G_Rotate = pid.getNumber("D_Gyro_Rotate");
-//        drive.kP_G_Drive = pid.getNumber("P_Gyro_Drive");
-//        drive.kI_G_Drive = pid.getNumber("I_Gyro_Drive");
-//        drive.kD_G_Drive = pid.getNumber("D_Gyro_Drive");
-//        drive.kP_E = pid.getNumber("P_Encoder_Drive");
-//        drive.kI_E = pid.getNumber("I_Encoder_Drive");
-//        drive.kD_E = pid.getNumber("D_Encoder_Drive");
-//        drive.setPIDEnc(drive.kP_E, drive.kI_E, drive.kD_E);
-//        drive.setPIDGyro(drive.kP_G_Drive, drive.kI_G_Drive, drive.kD_G_Drive);
     }
 
     public void autonomousPeriodic() {
@@ -136,8 +107,6 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         errorInAutonomous = false;
 
-//        ringLightRelay.set(Relay.Value.kOff);
-
         catapult.reset();
         arm.stopRollers();
     }
@@ -146,17 +115,18 @@ public class Robot extends IterativeRobot {
     private boolean prevOperatorBtn13 = false;
     private boolean prevOperatorBtn14 = false;
     public void teleopPeriodic() {
-        //<editor-fold defaultstate="collapsed" desc="Driver Controls">
-        // --- START DRIVER CONTROLS --- //
+        // <editor-fold defaultstate="collapsed" desc="Driver Controls">
+
         drive.warlordDrive(
                 Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f),
                 Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f));
 
         // Quick turn
-        if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP))
+        if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
             drive.setQuickTurn(true);
-        else
+        } else {
             drive.setQuickTurn(false);
+        }
 
         if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
             drive.setHighSpeed();
@@ -177,11 +147,11 @@ public class Robot extends IterativeRobot {
 //            lightController.send(LightController.INTAKE);
         }
 
-        // --- END DRIVER CONTROLS --- //
-        //</editor-fold>
+        // </editor-fold>
 
-        //<editor-fold defaultstate="collapsed" desc="Operator Controls">
-        // --- START OPERATOR CONTROL --- //
+
+        // <editor-fold defaultstate="collapsed" desc="Operator Controls">
+
         // Shooting controls
         if (Controllers.getG13OrJoyButton(24)) {
             if (Controllers.getJoystickButton(1)) {
@@ -200,51 +170,45 @@ public class Robot extends IterativeRobot {
             } else if (Controllers.getJoystickButton(6)) {
                 catapult.shoot(SequencerFactory.BLOOP_SHOT);
             }
-//                lightController.send(LightController.RAINBOW_CHASE);
 //            } else if (Controllers.getG13OrJoyButton(4)) {
 //                catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
 //                lightController.send(LightController.RAINBOW_CHASE);
 //            }
         }
 
-        if (!prevOperatorBtn14 && Controllers.getG13OrJoyButton(14))
-//            catapult.extendShoeFull();
+        if (!prevOperatorBtn14 && Controllers.getG13OrJoyButton(14)) {
             catapult.setShoeState(catapult.getShoeState() + 1);
-        if (!prevOperatorBtn13 && Controllers.getG13OrJoyButton(13))
-//            catapult.retractShoeFull();
+        }
+        if (!prevOperatorBtn13 && Controllers.getG13OrJoyButton(13)) {
             catapult.setShoeState(catapult.getShoeState() - 1);
+        }
 
         prevOperatorBtn13 = Controllers.getG13OrJoyButton(13);
         prevOperatorBtn14 = Controllers.getG13OrJoyButton(14);
-
 
         // Arm position controls
         if (Controllers.getJoystickButton(4)) {
             arm.setSetpoint(IntakeArm.IN_CATAPULT);
 //            lightController.send(LightController.RAINBOW_CYCLE);
-//        } else if (Controllers.getJoystickButton(6))
-//            arm.setSetpoint(IntakeArm.UP_POSITION);
         } else if (Controllers.getJoystickButton(9)) {
             arm.setSetpoint(IntakeArm.PICKUP);
 //            lightController.send(LightController.GOLD_CHASE);
         }
-//        else if (Controllers.getJoystickButton(10)) {
-//            arm.setSetpoint(IntakeArm.DEFENSE);
-//        }
-
-        else if (!prevOperatorBtn7 && Controllers.getG13OrJoyButton(7))
+        else if (!prevOperatorBtn7 && Controllers.getG13OrJoyButton(7)) {
             arm.stopRollers();
+        }
         prevOperatorBtn7 = Controllers.getG13OrJoyButton(7);
 
         // Catcher logic
-        if (Controllers.getJoystickAxis(4) > 0)
+        if (Controllers.getJoystickAxis(4) > 0) {
             catcher.extend();
-        else
+        } else {
             catcher.retract();
+        }
 
         arm.moveArm(-Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
-        // --- END OPERATOR CONTROL --- //
-        //</editor-fold>
+
+        // </editor-fold>
 
 //        switch ((int) DriverStation.getInstance().getMatchTime()) {
 //            case 45:
@@ -261,7 +225,6 @@ public class Robot extends IterativeRobot {
 //                break;
 //        }
 
-
         // Arm updates
         arm.run();
         catapult.run();
@@ -275,8 +238,6 @@ public class Robot extends IterativeRobot {
         if (Controllers.getJoystickButton(1))
             arm.setSetpoint(IntakeArm.STARTING_CONFIG);
 
-//        ringLightRelay.set(Relay.Value.kForward);
-
         globalPeriodic();
     }
 
@@ -285,25 +246,13 @@ public class Robot extends IterativeRobot {
     }
 
     public void globalPeriodic() {
-        if (arm.rollersOn()) {
-            talArmSmart = 1;
-        } else {
-            talArmSmart = 0;
-        }
-        potArmSmart = (int) (arm.getPotValue()) * 10 + talArmSmart;
-        SmartDashboard.putString("ArmPot" , "" + IntakeArm.UP_POSITION + "," + potArmSmart);
-
-        System.out.println("arm val = " + arm.getPotValue());
-
-
-//        System.out.println("sonic val = " + catapult.inCatapult());
-//
-//        System.out.println("gyro angle = " + drive.getAngle());
-//
-//        System.out.println("encoder output = " + drive.getEncoderOutput());
-
 //        locator.run();
-//        SmartDashboard.putStrin8g("field", locator.getX() + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
+
+        // pot value and the rollers + whether the motor is running
+        int armPotWidgetVal = (int)arm.getPotValue() * 10 + (arm.rollersOn() ? 1 : 0);
+        SmartDashboard.putString("ArmPot", Double.toString(IntakeArm.UP_POSITION) + "," + armPotWidgetVal);
+
+//        SmartDashboard.putString("field", Double.toString(locator.getX()) + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
 
         SmartDashboard.putNumber("pressure", pressureTransducer.getPressure());
 

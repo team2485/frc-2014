@@ -5,7 +5,7 @@ package team2485.auto;
  * @author Bryce Matsumori
  */
 public class SequencedTripleItem implements SequencedItem {
-    private SequencedItem item1, item2, item3;
+    private final SequencedItem item1, item2, item3;
 
     public SequencedTripleItem(SequencedItem item1, SequencedItem item2, SequencedItem item3) {
         this.item1 = item1;

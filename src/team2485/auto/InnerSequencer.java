@@ -4,12 +4,12 @@ package team2485.auto;
  * Runs a {@code Sequencer} as a {@code SequencedItem}.
  * The sequenced item runs until the sequencer has finished.
  * @author Bryce Matsumori
- * 
+ *
  * @see Sequencer
  * @see SequencedItem
  */
 public final class InnerSequencer implements SequencedItem {
-    private Sequencer sequencer;
+    private final Sequencer sequencer;
     private boolean finished = false;
 
     /**
@@ -19,7 +19,7 @@ public final class InnerSequencer implements SequencedItem {
     public InnerSequencer(Sequencer sequencer) {
         this.sequencer = sequencer;
     }
-    
+
     /**
      * Runs the sequencer.
      */

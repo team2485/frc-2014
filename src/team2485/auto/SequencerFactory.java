@@ -70,35 +70,15 @@ public class SequencerFactory {
      * @return The created {@code Sequencer}.
      */
     public static Sequencer createAuto(int type) {
-        // TODO: Create all autonomous sequences
-        // TODO: Change all forward pass to target shots
-        // TODO: Check -153 as new Drive() parameter
-        // TODO: Find rotateTo  values
-        // TODO: Add vision targeting/hot goal detection: must return to 0
-
         switch (type) {
             case NONE:
                 return new Sequencer();
+
             // Starting position from anywhere on the field
             case FORWARD:
                 return new Sequencer(new SequencedItem[] {
                     new Drive(45)
                 });
-
-            // Anywhere on the field
-//            case FORWARD_TRUSS:
-//                return new Sequencer(new SequencedItem[] {
-//                    new Drive(45),
-//                    new Drive(-153)
-//                });
-
-            // Anywhere on the field
-//            case FORWARD_CUSTOM:
-//                return new Sequencer(new SequencedItem[] {
-//                    new Drive(45),
-//                    // TODO: Get custom value from dashboard
-//                    new Drive(0)
-//                });
 
             // Aligned on left or right side
             case ONE_BALL_LEFT:
@@ -129,7 +109,6 @@ public class SequencerFactory {
 //                });
 
                 // Aligned on right side
-
 //                return new Sequencer(new SequencedItem[] {
 //                    new InnerSequencer(createAuto(ONE_BALL_RIGHT)),
 //                    new Drive(-63)
@@ -193,7 +172,6 @@ public class SequencerFactory {
                 return new Sequencer(new SequencedItem[] {
                     new MoveArm(IntakeArm.PICKUP - 150),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new InnerSequencer(SequencerFactory.createAuto(SequencerFactory.TARGET_SHOT)),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new MoveArm(IntakeArm.PICKUP, false),
                         new RetractShooter(),
@@ -208,8 +186,7 @@ public class SequencerFactory {
                     new SequencedPause(0.1),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new MoveArm(IntakeArm.IN_CATAPULT - 25),
-                        new StopRollers(),
-//                        new FullyExtendShoe(),
+                        new StopRollers()
                     }),
                     new DisableArmPID(),
                     new SequencedPause(0.6), // settle time
@@ -302,7 +279,6 @@ public class SequencerFactory {
                     }),
 
                     new DetectBallInCatapult(),
-//                    new SequencedPause(0.1),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new MoveArm(IntakeArm.IN_CATAPULT - 25),
                         new StopRollers(),
@@ -492,7 +468,6 @@ public class SequencerFactory {
      * @return The created {@code Sequencer}.
      */
     public static Sequencer createShot(int type) {
-
         switch (type) {
             case POWER_HIGH_SHOT:
                 return new Sequencer(new SequencedItem[] {

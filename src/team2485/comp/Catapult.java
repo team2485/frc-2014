@@ -9,14 +9,14 @@ import team2485.auto.SequencerFactory;
 /**
  * Represents the catapult
  *
- * @author Camille Considine
  * @author Marty Kausas
+ * @author Camille Considine
  */
 public class Catapult {
-    public static int FULLY_RETRACTED   = 1,
-            SHORT_EXTENDED              = 2,
-            LONG_EXTENDED               = 3,
-            FULLY_EXTENDED              = 4;
+    public static int FULLY_RETRACTED = 1,
+            SHORT_EXTENDED            = 2,
+            LONG_EXTENDED             = 3,
+            FULLY_EXTENDED            = 4;
 
     private int currentShoeState = 1;
 
@@ -160,8 +160,7 @@ public class Catapult {
     }
 
     public boolean inCatapult() {
-        System.out.println("Sonic value " + sonic.getValue());
-        return sonic.getValue() < 20; // was 25
+        return sonic.getValue() < 20;
     }
 
     public boolean shoeShortExtended() {
@@ -179,9 +178,7 @@ public class Catapult {
     }
 
     public void setShoeState(int state) {
-        if (state < FULLY_RETRACTED || state > FULLY_EXTENDED) {
-            // do nothing
-        } else {
+        if (state >= FULLY_RETRACTED && state <= FULLY_EXTENDED) {
             currentShoeState = state;
             switch (currentShoeState) {
                 // fully retracted

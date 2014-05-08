@@ -5,7 +5,7 @@ package team2485.auto;
  * @author Bryce Matsumori
  */
 public class SequencedDoubleItem implements SequencedItem {
-    private SequencedItem item1, item2;
+    private final SequencedItem item1, item2;
 
     public SequencedDoubleItem(SequencedItem item1, SequencedItem item2) {
         this.item1 = item1;

@@ -3,7 +3,7 @@ package team2485.comp;
 import edu.wpi.first.wpilibj.Solenoid;
 
 /**
- *
+ * Pneumatic catching mechanism
  * @author W.A.R.Lords
  */
 public class Catcher {
@@ -25,5 +25,4 @@ public class Catcher {
     public void retract() {
         frontExtension.set(false);
     }
-
 }

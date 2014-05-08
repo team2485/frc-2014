@@ -15,11 +15,10 @@ public class DriveTrain {
     private Encoder encoder;
     private Solenoid gearShifter;
 
-    // TODO: Find the speed ratings
     private final double
             NORMAL_SPEED_RATING = 1.0,
-            FAST_SPEED_RATING = 1.0,
-            SLOW_SPEED_RATING = 0.6;
+            FAST_SPEED_RATING   = 1.0,
+            SLOW_SPEED_RATING   = 0.6;
 
     private double driveSpeed = NORMAL_SPEED_RATING;
 
@@ -30,7 +29,6 @@ public class DriveTrain {
     private PIDController encPID;
     public static double
             kP_G_Rotate = 0.028,
-//            kP_G_Rotate = 0.04,
             kI_G_Rotate = 0.0,
             kD_G_Rotate = 0.0;
     public static double kP_G_Drive, kI_G_Drive, kD_G_Drive;
@@ -38,11 +36,11 @@ public class DriveTrain {
             kP_E = 0.075,
             kI_E,
             kD_E;
-    // TODO: Find all tolerances
+
     private final double AbsTolerance_Imu_DriveTo = 2.0;
     private final double AbsTolerance_Imu_TurnTo = 3.0;
     private final double AbsTolerance_Enc = 5;
-    // TODO: Find low speed rates
+
     private double lowEncRate = 5;
     // --- END AUTO --- //
 
@@ -77,29 +75,29 @@ public class DriveTrain {
 
         if (imu != null) {
             dummyImuOutput = new DummyOutput();
-            imuPID         = new PIDController(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate, imu, dummyImuOutput);
+            imuPID = new PIDController(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate, imu, dummyImuOutput);
             imuPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
         }
 
         dummyEncoderOutput = new DummyOutput();
-        encPID             = new PIDController(kP_E, kI_E, kD_E, encoder, dummyEncoderOutput);
+        encPID = new PIDController(kP_E, kI_E, kD_E, encoder, dummyEncoderOutput);
         encPID.setAbsoluteTolerance(AbsTolerance_Enc);
 
         encoder.reset();
     }
 
     public DriveTrain(Talon leftDrive, Talon rightDrive, Encoder encoder, Solenoid gearShifter) {
-        this.leftDrive      = leftDrive;
-        this.rightDrive     = rightDrive;
-        this.encoder        = encoder;
-        this.gearShifter   = gearShifter;
+        this.leftDrive   = leftDrive;
+        this.rightDrive  = rightDrive;
+        this.encoder     = encoder;
+        this.gearShifter = gearShifter;
 
         dummyEncoderOutput = new DummyOutput();
         encoder.setPIDSourceParameter(Encoder.PIDSourceParameter.kDistance);
         encoder.setDistancePerPulse(0.05178664);
         encoder.start();
 
-        encPID             = new PIDController(kP_E, kI_E, kD_E, encoder, dummyEncoderOutput);
+        encPID = new PIDController(kP_E, kI_E, kD_E, encoder, dummyEncoderOutput);
         encPID.setAbsoluteTolerance(AbsTolerance_Enc);
     }
 
@@ -120,11 +118,12 @@ public class DriveTrain {
         this.imu = imu;
 
         dummyImuOutput = new DummyOutput();
-        imuPID         = new PIDController(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate, imu, dummyImuOutput);
+        imuPID = new PIDController(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate, imu, dummyImuOutput);
         imuPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Autonomous Methods">
+
     /**
      * Rotates to the parameter degrees from current robot angle
      *
@@ -134,17 +133,9 @@ public class DriveTrain {
     public boolean rotateTo(double degrees) {
         if (!imuPID.isEnable()) {
             imuPID.enable();
-//            double setpoint = degrees + imu.getYaw();
-//            if (setpoint > 180)
-//                setpoint -= 360;
-//            else if (setpoint < -180)
-//                setpoint += 360;
-
             imuPID.setSetpoint(degrees);
         }
-        if (imuPID.getP() != kP_G_Rotate ||
-                imuPID.getI() != kI_G_Rotate ||
-                imuPID.getD() != kD_G_Rotate) {
+        if (imuPID.getP() != kP_G_Rotate || imuPID.getI() != kI_G_Rotate || imuPID.getD() != kD_G_Rotate) {
             initPIDGyroRotate();
         }
 
@@ -152,7 +143,7 @@ public class DriveTrain {
         setLeftRight(imuOutput, -imuOutput);
         System.out.println("p " + imuPID.getP() + " kpg rotate " + kP_G_Rotate);
         System.out.println("imu outputs " + imuOutput);
-//
+
         System.out.println("ROTATION Error: " + imuPID.getError() + " Current Setpoint: " + imuPID.getSetpoint() + " yaw " + imu.getYaw());
         System.out.println("enc rate " + Math.abs(encoder.getRate()));
 
@@ -165,8 +156,8 @@ public class DriveTrain {
             imuPID.disable();
             setLeftRight(0, 0);
             return true;
-        } else
-            return false;
+        }
+        return false;
     }
 
     /**
@@ -174,7 +165,6 @@ public class DriveTrain {
      * @return when finished
      */
     public boolean rotateToZero() {
-//        return rotateTo(-imu.getYaw());
         return rotateTo(0);
     }
 
@@ -188,56 +178,30 @@ public class DriveTrain {
         if (!encPID.isEnable()) {
             encoder.start();
             encPID.enable();
-
         }
 
-//        if (!imuPID.isEnable())
-//            imuPID.enable();
-//        if (imuPID.getP() != kP_G_Drive) {
-//            imuPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
-//            imuPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
-//        }
-
-//        System.out.println("kpdrive " + imuPID.getP() + " kpgdrive " + kP_G_Drive);
-
-        //        This corrects the error better but too jerky
-        //        if (Math.abs(driveEncoder.getRate()) < 30)
-        //            encPID.setPID(Constant.Kp_E, Constant.Ki_E, Constant.Kd_E);
-        //        else
-        //            encPID.setPID(Constant.Kp_E, 0, Constant.Kd_E);
-
-//        System.out.println("enc p val " + encPID.getP() + ", " + encPID.getI() + ", " + encPID.getD());
-
         encPID.setSetpoint(inches);
-//        imuPID.setSetpoint(0); // assumption that the gyro has been reset
 
-//        double gyroOutput = dummyImuOutput.get();
         double encoderOutput = dummyEncoderOutput.get();
-        double leftOutput = encoderOutput /*+ gyroOutput*/;
-        double rightOutput = (encoderOutput /*- gyroOutput*/);
+        double leftOutput  = encoderOutput; // encoderOutput + gyroOutput
+        double rightOutput = encoderOutput; // encoderOutput - gyroOutput
 
-//        System.out.println("gyro output " + /*gyroOutput + */" enc output " + encoderOutput);
         setLeftRight(leftOutput, rightOutput);
 
-//        System.out.println("DRIVE Error: " + encPID.getError() + " Current Setpoint: " + encPID.getSetpoint() + " pidGet " + encoder.pidGet());
-//        System.out.println("rate " + encoder.getRate() + " count " + encoder.getRaw() + " pidGet " + encoder.pidGet() + " distance " + encoder.getDistance() + " normal get " + encoder.get());
-
         // Check to see if we're on target
-        if (
-//                imuPID.onTarget()  &&
-                encPID.onTarget() &&
-                Math.abs(encoder.getRate()) < lowEncRate) {
-                System.out.println("ggeasy");
+        if (encPID.onTarget() && Math.abs(encoder.getRate()) < lowEncRate) {
+            System.out.println("ggeasy");
             setLeftRight(0.0, 0.0);
-//            imuPID.disable();
             encPID.disable();
             return true;
-        } else
-            return false;
+        }
+        return false;
     }
+
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="W.A.R. Lord Drive">
+
     /**
      * W.A.R. Lord Drive
      * This drive method is based off of Team 254's Ultimate Ascent
@@ -248,7 +212,6 @@ public class DriveTrain {
      */
     public void warlordDrive(double controllerY, double controllerX) {
         boolean isHighGear = isQuickTurn;
-//        drive.shift(isHighGear);
 
         double wheelNonLinearity;
 
@@ -299,10 +262,6 @@ public class DriveTrain {
                 }
             }
             sensitivity = sensitivityLow;
-
-            if (Math.abs(throttle) > 0.1) {
-                // sensitivity = 1.0 - (1.0 - sensitivity) / Math.abs(throttle);
-            }
         }
         double negInertiaPower = negInertia * negInertiaScalar;
         negInertiaAccumulator += negInertiaPower;
@@ -338,8 +297,8 @@ public class DriveTrain {
         }
 
         rightPwm = leftPwm = linearPower;
-        leftPwm += angularPower;
 
+        leftPwm  += angularPower;
         rightPwm -= angularPower;
 
         if (leftPwm > 1.0) {
@@ -356,12 +315,9 @@ public class DriveTrain {
             rightPwm = -1.0;
         }
 
-        // TODO: Remove printlns after testing has been done
-//        System.out.println("Outputs pwm: \t(" + leftPwm + ", " + rightPwm + ")");
-//        System.out.println("Ang and Lin: \t(" + angularPower + ", " + linearPower + ")");
-
         setLeftRight(leftPwm, rightPwm);
     }
+
     // </editor-fold>
 
     /**
@@ -373,6 +329,7 @@ public class DriveTrain {
     }
 
     // <editor-fold defaultstate="collapsed" desc="General Methods">
+
     /**
      * Sends outputs values to the left and right side
      * of the drive base.
@@ -413,31 +370,23 @@ public class DriveTrain {
     /**
      * Switch into high speed mode
      */
-    public void setHighSpeed() { driveSpeed = FAST_SPEED_RATING; }
+    public void setHighSpeed() {
+        driveSpeed = FAST_SPEED_RATING;
+    }
 
     /**
      * Switch into low speed mode
      */
-    public void setLowSpeed() { driveSpeed = SLOW_SPEED_RATING; }
+    public void setLowSpeed() {
+        driveSpeed = SLOW_SPEED_RATING;
+    }
 
     /**
      * Switch to normal speed mode
      */
-    public void setNormalSpeed() { driveSpeed = NORMAL_SPEED_RATING; }
-
-    /**
-     * Set the PID values for the gyro {@code PIDController}g
-     *
-     * @param Kp
-     * @param Ki
-     * @param Kd
-     */
-//    public void setPIDGyro(double Kp, double Ki, double Kd) {
-//        kP_G_Rotate = Kp;
-//        kI_G_Rotate = Ki;
-//        kD_G_Rotate = Kd;
-//        imuPID.setPID(Kp, Ki, Kd);
-//    }
+    public void setNormalSpeed() {
+        driveSpeed = NORMAL_SPEED_RATING;
+    }
 
     public void setPIDGyroDrive() {
         imuPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
@@ -452,20 +401,6 @@ public class DriveTrain {
     public void initPIDEncoder() {
         encPID.setPID(kP_E, kI_E, kD_E);
     }
-
-//    /**
-//     * Set the PID values for the encoder {@code PIDController}
-//     *
-//     * @param Kp
-//     * @param Ki
-//     * @param Kd
-//     */
-//    public void setPIDEnc(double Kp, double Ki, double Kd) {
-//        kP_E = Kp;
-//        kI_E = Ki;
-//        kD_E = Kd;
-//        encPID.setPID(Kp, Ki, Kd);
-//    }
 
     public void resetSensors() {
         encoder.reset();

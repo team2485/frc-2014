@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  * @author Camille Considine
  * @author Bryce Matsumori
- */ 
+ */
 public class Log {
     /**
      * Whether the logger should log or not.

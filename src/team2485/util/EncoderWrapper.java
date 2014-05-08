@@ -58,7 +58,7 @@ public class EncoderWrapper implements PIDSource {
         counts[currIndex] = thisCount - lastCount;
          times[currIndex] = thisTime - lastTime;
 
-        lastTime = thisTime;
+        lastTime  = thisTime;
         lastCount = thisCount;
 
         double countDiffSum = 0, timeDiffSum = 0;
