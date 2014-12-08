@@ -22,7 +22,7 @@ public class DriveTrain {
 
     private double driveSpeed = NORMAL_SPEED_RATING;
 
-    // --- AUTONOMOUS --- //
+    // AUTONOMOUS
     private DummyOutput dummyImuOutput;
     private DummyOutput dummyEncoderOutput;
     private PIDController imuPID;
@@ -42,23 +42,22 @@ public class DriveTrain {
     private final double AbsTolerance_Enc = 5;
 
     private double lowEncRate = 5;
-    // --- END AUTO --- //
 
-    // --- W.A.R. LORD DRIVE STUFF --- //
+    // W.A.R. LORD DRIVE
     private double oldWheel = 0.0;
     private double quickStopAccumulator = 0.0;
     private final double throttleDeadband = 0.1;
     private final double wheelDeadband = 0.1;
 
-    // Constants from old file
     private final double sensitivityHigh = 0.85;
     private final double sensitivityLow = 0.75;
     private boolean isQuickTurn = false;
-    // --- END DRIVE STUFF --- //
+
     private IMU imu;
 
     /**
-     * Default Constructor
+     *
+     * Constructor with IMU.
      *
      * @param leftDrive
      * @param rightDrive
@@ -152,7 +151,6 @@ public class DriveTrain {
         imuPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
 
         if (imuPID.onTarget() && Math.abs(encoder.getRate()) < lowEncRate) {
-            System.out.println("ggeasy");
             imuPID.disable();
             setLeftRight(0, 0);
             return true;
@@ -183,14 +181,13 @@ public class DriveTrain {
         encPID.setSetpoint(inches);
 
         double encoderOutput = dummyEncoderOutput.get();
-        double leftOutput  = encoderOutput; // encoderOutput + gyroOutput
-        double rightOutput = encoderOutput; // encoderOutput - gyroOutput
+        double leftOutput  = encoderOutput;
+        double rightOutput = encoderOutput;
 
         setLeftRight(leftOutput, rightOutput);
 
         // Check to see if we're on target
         if (encPID.onTarget() && Math.abs(encoder.getRate()) < lowEncRate) {
-            System.out.println("ggeasy");
             setLeftRight(0.0, 0.0);
             encPID.disable();
             return true;

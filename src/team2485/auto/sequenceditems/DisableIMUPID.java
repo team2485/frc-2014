@@ -5,7 +5,7 @@ import team2485.auto.SequencedItem;
 
 /**
  *
- * @author MK
+ * @author Marty Kausas
  */
 public class DisableIMUPID implements SequencedItem {
     private boolean hasRun;

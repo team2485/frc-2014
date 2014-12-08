@@ -9,13 +9,13 @@ import team2485.auto.SequencedItem;
  * @author Camille Considine
  */
 public class ExtendThreePistons implements SequencedItem {
-    
+
     public void run() {
         Robot.catapult.extendThree();
     }
 
     public double duration() {
         if (Robot.errorInAutonomous) return 0;
-        return 0.9; // 0.7
+        return 0.9;
     }
 }

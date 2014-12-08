@@ -6,7 +6,7 @@ import team2485.comp.Catapult;
 
 /**
  * Extends the shoe piston
- * @author Marty
+ * @author Marty Kausas
  */
 public class FullyExtendShoe implements SequencedItem {
     private boolean initialCheck = true;

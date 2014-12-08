@@ -5,7 +5,7 @@ import team2485.auto.SequencedItem;
 
 /**
  *
- * @author Marty
+ * @author Marty Kausas
  */
 public class RetractBoot implements SequencedItem {
 

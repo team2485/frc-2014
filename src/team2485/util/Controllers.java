@@ -203,52 +203,6 @@ public final class Controllers {
 
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Guitar Hero X-plorer Axes">
-
-    /**
-     * The X-plorer Y rotation axis.
-     */
-    public static final int XPLORER_AXIS_ROTATION_Y = 5;
-    /**
-     * The X-plorer Z rotation axis.
-     */
-    public static final int XPLORER_AXIS_ROTATION_Z = 3;
-    /**
-     * The X-plorer controller whammy axis.
-     */
-    public static final int XPLORER_AXIS_WHAMMY = 4;
-    /**
-     * The X-plorer horizontal directional pad axis.
-     */
-    public static final int XPLORER_AXIS_DPAD_H = 6;
-
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Guitar Hero X-plorer Buttons">
-
-    /**
-     * The green X-plorer button.
-     */
-    public static final int XPLORER_BUTTON1 = 1;
-    /**
-     * The red X-plorer button.
-     */
-    public static final int XPLORER_BUTTON2 = 2;
-    /**
-     * The yellow X-plorer button.
-     */
-    public static final int XPLORER_BUTTON3 = 4;
-    /**
-     * The blue X-plorer button.
-     */
-    public static final int XPLORER_BUTTON4 = 3;
-    /**
-     * The orange X-plorer button.
-     */
-    public static final int XPLORER_BUTTON5 = 5;
-
-    // </editor-fold>
-
     /**
      * Gets the current value of the specified axis on the secondary controller,
      * limited by the default input threshold to prevent idle movement.
@@ -308,55 +262,6 @@ public final class Controllers {
             throw new IllegalArgumentException("Joystick button number (" + button + ") is invalid.");
 
         return secondary.getRawButton(button);
-    }
-
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="G13 Input">
-
-    public static final int
-            G13_BTN_LCLICK = 23,
-            G13_BTN_RCLICK = 24;
-
-    private static final NetworkTable g13Table = NetworkTable.getTable("G13");
-
-    private static final Hashtable g13ToJoyMap = new Hashtable();
-    static {
-        g13ToJoyMap.put(new Integer(7),  new Integer(8));  // rollers off
-//        g13ToJoyMap.put(new Integer(6),  new Integer(-1)); // rollers on - not on joystick as of now
-        g13ToJoyMap.put(new Integer(14), new Integer(7));  // extend shoe
-        g13ToJoyMap.put(new Integer(13), new Integer(11)); // retract shoe
-        g13ToJoyMap.put(new Integer(24), new Integer(12)); // safety
-        g13ToJoyMap.put(new Integer(4),  new Integer(7));  // power shot
-    }
-
-    /**
-     * Reads G13 button input from the SmartDashboard.
-     * @param button The button index.
-     * @return The button state.
-     */
-    public static boolean getG13Button(int button) {
-        if (button < 1 || button > 24)
-            throw new IllegalArgumentException("G13 button G" + button + " is invalid.");
-
-        return g13Table.getBoolean(Integer.toString(button), false);
-    }
-
-    /**
-     * Whether to use the G13 (true) for input or the joystick (false) for input.
-     */
-    public static boolean USE_G13 = false;
-
-    /**
-     * Reads either G13 or joystick button input, based on {@code USE_G13}.
-     * This can be used to switch between using the G13 and joystick with a single bool.
-     * The G13 -> joystick mappings are stored in {@code g13ToJoyMap} in {@code Controllers}.
-     * @param button The G13 button index.
-     * @return The button state.
-     */
-    public static boolean getG13OrJoyButton(int button) {
-        if (USE_G13) return getG13Button(button);
-        else return getJoystickButton(((Integer)g13ToJoyMap.get(new Integer(button))).intValue());
     }
 
     // </editor-fold>

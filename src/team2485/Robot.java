@@ -10,7 +10,7 @@ import team2485.comp.*;
 import team2485.util.Controllers;
 
 /**
- * Team 2485's code for our 2014 FRC season.
+ * Team 2485's code for the 2014 FRC season.
  * Robot Name: Odin
  *
  * @author Bryce Matsumori
@@ -30,7 +30,6 @@ public class Robot extends IterativeRobot {
     public static Catcher catcher;
     public static TargetTracker tracker;
     public static Locator locator;
-//    private LightController lightController;
 
     public static IMU imu;
     private Compressor compressor;
@@ -44,15 +43,12 @@ public class Robot extends IterativeRobot {
 
     public void robotInit() {
         leftEncoder  = new Encoder(13, 14);
-//        rightEncoder = new Encoder(12, 11);
 
         drive             = new DriveTrain(new Talon(10), new Talon(8), leftEncoder, new Solenoid(5));
         catapult          = new Catapult(8, 7, 4, 6, 8, new AnalogChannel(2));
-//        locator           = new Locator(leftEncoder, rightEncoder, drive);
         arm               = new IntakeArm(new Talon(9), new Talon(7), new AnalogPotentiometer(6, 1000));
         catcher           = new Catcher(3);
         errorInAutonomous = false;
-//        lightController   = new LightController(new Relay(7), new Relay(6), new Relay(5), new Relay(4), new Relay(3)); // white red black black red
 
         try {
             imu = new IMU(new BufferingSerialPort(57600), IMU_UPDATE_RATE);
@@ -94,14 +90,12 @@ public class Robot extends IterativeRobot {
         drive.resetSensors();
         drive.lowGear();
 
-//        locator.setAutoPosition(autonomousType);
     }
 
     public void autonomousPeriodic() {
         autoSequence.run();
         globalPeriodic();
 
-//        lightController.send(LightController.HAPPY_RAINBOW);
     }
 
     public void teleopInit() {
@@ -144,7 +138,6 @@ public class Robot extends IterativeRobot {
         // Driver pickup controls
         if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
             arm.setSetpoint(IntakeArm.PICKUP);
-//            lightController.send(LightController.INTAKE);
         }
 
         // </editor-fold>
@@ -153,16 +146,13 @@ public class Robot extends IterativeRobot {
         // <editor-fold defaultstate="collapsed" desc="Operator Controls">
 
         // Shooting controls
-        if (Controllers.getG13OrJoyButton(24)) {
+        if (Controllers.getJoystickButton(24)) {
             if (Controllers.getJoystickButton(1)) {
                 catapult.shoot(SequencerFactory.TARGET_SHOT);
-//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(2)) {
                 catapult.shoot(SequencerFactory.TRUSS_SHOT);
-//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(3)) {
                 catapult.shoot(SequencerFactory.BOOT);
-//                lightController.send(LightController.RAINBOW_CHASE);
             } else if (Controllers.getJoystickButton(5)) {
                 catapult.shoot(SequencerFactory.MIDRANGE_SHOT_THREE_CYLINDER);
             } else if (Controllers.getJoystickButton(10)) {
@@ -170,34 +160,28 @@ public class Robot extends IterativeRobot {
             } else if (Controllers.getJoystickButton(6)) {
                 catapult.shoot(SequencerFactory.BLOOP_SHOT);
             }
-//            } else if (Controllers.getG13OrJoyButton(4)) {
-//                catapult.shoot(SequencerFactory.POWER_HIGH_SHOT);
-//                lightController.send(LightController.RAINBOW_CHASE);
-//            }
         }
 
-        if (!prevOperatorBtn14 && Controllers.getG13OrJoyButton(14)) {
+        if (!prevOperatorBtn14 && Controllers.getJoystickButton(14)) {
             catapult.setShoeState(catapult.getShoeState() + 1);
         }
-        if (!prevOperatorBtn13 && Controllers.getG13OrJoyButton(13)) {
+        if (!prevOperatorBtn13 && Controllers.getJoystickButton(13)) {
             catapult.setShoeState(catapult.getShoeState() - 1);
         }
 
-        prevOperatorBtn13 = Controllers.getG13OrJoyButton(13);
-        prevOperatorBtn14 = Controllers.getG13OrJoyButton(14);
+        prevOperatorBtn13 = Controllers.getJoystickButton(13);
+        prevOperatorBtn14 = Controllers.getJoystickButton(14);
 
         // Arm position controls
         if (Controllers.getJoystickButton(4)) {
             arm.setSetpoint(IntakeArm.IN_CATAPULT);
-//            lightController.send(LightController.RAINBOW_CYCLE);
         } else if (Controllers.getJoystickButton(9)) {
             arm.setSetpoint(IntakeArm.PICKUP);
-//            lightController.send(LightController.GOLD_CHASE);
         }
-        else if (!prevOperatorBtn7 && Controllers.getG13OrJoyButton(7)) {
+        else if (!prevOperatorBtn7 && Controllers.getJoystickButton(7)) {
             arm.stopRollers();
         }
-        prevOperatorBtn7 = Controllers.getG13OrJoyButton(7);
+        prevOperatorBtn7 = Controllers.getJoystickButton(7);
 
         // Catcher logic
         if (Controllers.getJoystickAxis(4) > 0) {
@@ -208,28 +192,10 @@ public class Robot extends IterativeRobot {
 
         arm.moveArm(-Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 0.2f));
 
-        // </editor-fold>
-
-//        switch ((int) DriverStation.getInstance().getMatchTime()) {
-//            case 45:
-//                lightController.send(LightController.GOLD);
-//                break;
-//            case 75:
-//                lightController.send(LightController.GREEN);
-//                break;
-//            case 105:
-//                lightController.send(LightController.BLUE);
-//                break;
-//            case 135:
-//                lightController.send(LightController.RED);
-//                break;
-//        }
-
         // Arm updates
         arm.run();
         catapult.run();
         globalPeriodic();
-//        lightController.send(LightController.HAPPY_RAINBOW);
     }
 
     public void testPeriodic() {
@@ -246,13 +212,10 @@ public class Robot extends IterativeRobot {
     }
 
     public void globalPeriodic() {
-//        locator.run();
 
         // pot value and the rollers + whether the motor is running
         int armPotWidgetVal = (int)arm.getPotValue() * 10 + (arm.rollersOn() ? 1 : 0);
         SmartDashboard.putString("ArmPot", Double.toString(IntakeArm.UP_POSITION) + "," + armPotWidgetVal);
-
-//        SmartDashboard.putString("field", Double.toString(locator.getX()) + "," + locator.getY() + "," + (imu == null ? 0 : imu.getYaw()) + ",false");
 
         SmartDashboard.putNumber("pressure", pressureTransducer.getPressure());
 

@@ -15,38 +15,18 @@ public class SequencerFactory {
 
     public static final int
             // Autonomous options
-            NONE                                 = -1,
+            NONE                            = -1,
             // just move forward
-            FORWARD                              = 0,
-            // move forward and back to truss
-//            FORWARD_TRUSS                        = 1,
-            // specifying distance
-//            FORWARD_CUSTOM                       = 2,
-            // if hot, shoot, not - wait to shoot, move forward, stay, start on left
-            ONE_BALL_LEFT                        = 3,
+            FORWARD                         = 0,
+            ONE_BALL_LEFT                   = 3,
             // if hot, shoot, not - wait to shoot, move forward, stay, start on right
-            ONE_BALL_RIGHT                       = 4,
-            // if hot, shoot, not - wait to shoot, move forward, move to truss, rotate 180, stay, start on left
-//            ONE_BALL_TRUSS_LEFT                  = 5,
-            // if hot, shoot, not - wait to shoot, move forward, move to truss, rotate 180, stay, start on right
-//            ONE_BALL_TRUSS_RIGHT                 = 6,
-            // if hot, shoot, not - wait to shoot, move forward, on one side, angle to the center, move diagonally back
-//            ONE_BALL_FROM_LEFT_TO_CENTER_TRUSS   = 7,
-            // if hot, shoot, not - wait to shoot, but use angled shot left
-//            ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS  = 8,
-            // same as before, but other side version
-//            ONE_BALL_ANGLED_SHOT_LEFT            = 9,
-            // if hot, shoot, not - wait to shoot, but use angled shot right
-//            ONE_BALL_ANGLED_SHOT_RIGHT           = 10,
-            // specifying angle and distance
-//            ONE_BALL_CUSTOM_LEFT                 = 11,
-            TWO_BALL_NO_HOT                      = 14,
+            ONE_BALL_RIGHT                  = 4,
+            TWO_BALL_NO_HOT                 = 14,
             // two balls, move forward
-            TWO_BALL_HOT                         = 12,
+            TWO_BALL_HOT                    = 12,
             // three balls, move forward
-            THREE_BALL                           = 13,
-
-            THREE_BALL_HOT                       = 15,
+            THREE_BALL                      = 13,
+            THREE_BALL_HOT                  = 15,
 
             // Shot options
             TARGET_SHOT                     = 0,
@@ -60,8 +40,8 @@ public class SequencerFactory {
             OVER_TRUSS_CATCH                = 8,
             BLOOP_SHOT                      = 9;
 
-    public static final double TARGET_FLIP_PAUSE_TIME = 0.2, MARTY_WAIT_TIME = 1.8;
-    public static final double RETRACT_EXTEND_TIME = 0.7; // TODO: figure out duration
+    public static final double TARGET_FLIP_PAUSE_TIME = 0.2, OPERATOR_WAIT_TIME = 1.8;
+    public static final double RETRACT_EXTEND_TIME = 0.7;
 
     /**
      * Creates the requested autonomous sequence.
@@ -85,7 +65,7 @@ public class SequencerFactory {
             case ONE_BALL_RIGHT:
                 return new Sequencer(new SequencedItem[] {
                     new SequencedMultipleItem(new SequencedItem[] {
-                        new SequencedPause(MARTY_WAIT_TIME), // wait until the marty has shown card
+                        new SequencedPause(OPERATOR_WAIT_TIME), // wait until the Operator has shown card
                         new MoveArmNoWait(IntakeArm.IN_CATAPULT - 150),
                         new FullyExtendShoe(),
                         new Drive(45),
@@ -98,75 +78,6 @@ public class SequencerFactory {
                     new SequencedPause(1),
                     new Drive(60)
                 });
-
-            // <editor-fold defaultstate="collapsed" desc="Old Sequences">
-            // Aligned on left side
-//            case ONE_BALL_TRUSS_LEFT:
-//            case ONE_BALL_TRUSS_RIGHT:
-//                return new Sequencer(new SequencedItem[] {
-//                    new InnerSequencer(createAuto(ONE_BALL_LEFT)),
-//                    new Drive(-63)
-//                });
-
-                // Aligned on right side
-//                return new Sequencer(new SequencedItem[] {
-//                    new InnerSequencer(createAuto(ONE_BALL_RIGHT)),
-//                    new Drive(-63)
-//                });
-
-                // Aligned on left side
-//            case ONE_BALL_FROM_LEFT_TO_CENTER_TRUSS:
-//            case ONE_BALL_FROM_RIGHT_TO_CENTER_TRUSS:
-//                return new Sequencer(new SequencedItem[] {
-//                    new InnerSequencer(createAuto(ONE_BALL_LEFT)),
-//                    new Rotate(-30),
-//                    new Drive(-37)
-//                });
-
-//                return new Sequencer(new SequencedItem[] {
-//                    new InnerSequencer(createAuto(ONE_BALL_RIGHT)),
-//                    new Rotate(30),
-//                    new Drive(-37)
-//                });
-
-//            case ONE_BALL_ANGLED_SHOT_LEFT:
-//                return new Sequencer(new SequencedItem[] {
-//                    new SequencedPause(TARGET_FLIP_PAUSE_TIME),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                       new FullyExtendShoe(),
-//                       new WaitForTarget(),
-//                       new Drive(45)}),
-//                    new WaitForHot(WaitForHot.IN_FRONT),
-//                    new Rotate(-10),
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-//                    new TurnToZero(),
-//                });
-
-//            case ONE_BALL_ANGLED_SHOT_RIGHT:
-//                return new Sequencer(new SequencedItem[] {
-//                    new SequencedPause(TARGET_FLIP_PAUSE_TIME),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                       new FullyExtendShoe(),
-//                       new WaitForTarget(),
-//                       new Drive(45)}),
-//                    new WaitForHot(WaitForHot.IN_FRONT),
-//                    new Rotate(15),
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-//                    new TurnToZero(),
-//                });
-
-//            case ONE_BALL_CUSTOM_LEFT:
-//                return new Sequencer(new SequencedItem[] {
-//                    new SequencedPause(TARGET_FLIP_PAUSE_TIME),
-//                    new WaitForTarget(),
-//                    new WaitForHot(WaitForHot.IN_FRONT),
-//                    // TODO: get custom rotate and drive values from dashboard
-//                    new Rotate(0),
-//                    new FullyExtendShoe(),
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT)),
-//                   new Drive(0)
-//                });
-            // </editor-fold>
 
             case TWO_BALL_NO_HOT:
                 return new Sequencer(new SequencedItem[] {
@@ -228,10 +139,10 @@ public class SequencerFactory {
                         new MoveArm(IntakeArm.IN_CATAPULT - 100),
                         new StopRollers(),
                     }),
-                    new SequencedDoubleItem(
+                    new SequencedMultipleItem(new SequencedItem[] {
                         new Drive(50),
-                        new FullyExtendShoe()
-                    ),
+                        new FullyExtendShoe(),
+                    }),
                     new DisableEncoderPID(),
                     new TurnToOtherTarget(),
                     new DisableIMUPID(),
@@ -296,101 +207,6 @@ public class SequencerFactory {
                     new DisableEncoderPID()
                 });
 
-            // <editor-fold defaultstate="collapsed" desc="Previous three ball">
-//                return new Sequencer(new SequencedItem[] {
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArmNoWait(IntakeArm.PICKUP - 100, false),
-//                        new SequencedPause(1.5)
-//                    }),
-//                    new DisableArmPID(),
-//                    new SequencedPause(0.8),
-//
-//
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArmNoWait(IntakeArm.PICKUP, false),
-//                        new RetractShooter(),
-//                        new WaitForBallToLeave()
-//                    }),
-//                    new SequencedPause(0.8),
-//                    new MoveArm(IntakeArm.PICKUP, true),
-//                    new DetectBallInCatapult(),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArm(IntakeArm.IN_CATAPULT),
-//                        new StopRollers(),
-//                        new FullyExtendShoe(),
-//                    }),
-//                    new SequencedPause(1.0), // settle time
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new RetractShooter(),
-//                        new WaitForBallToLeave(),
-//                        new FullyRetractShoe(),
-//                    }),
-//                    new SequencedPause(0.5),
-//                    new SequencedDoubleItem(
-//                        new MoveArm(IntakeArm.PICKUP, true),
-//                        new Drive(-24)),
-//                    new DisableEncoderPID(),
-//                    new DetectBallInCatapult(),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArm(IntakeArm.IN_CATAPULT),
-//                        new StopRollers(),
-//                        new Drive(50),
-//                        new FullyExtendShoe()
-//                    }),
-//                    new DisableEncoderPID(),
-//                    new SequencedPause(0.8), // settle time
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new RetractShooter()
-//                 });
-            // </editor-fold>
-
-            // <editor-fold defaultstate="collapsed" desc="Auto from SD (pre-catcher)">
-//                return new Sequencer(new SequencedItem[] {
-//                    new FullyExtendShoe(),
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArmNoWait(IntakeArm.PICKUP, false),
-//                        new RetractShooter(),
-//                        new WaitForBallToLeave(),
-//                        new FullyRetractShoe(),
-//                    }),
-//                    new SequencedPause(0.8),
-//                    new MoveArm(IntakeArm.PICKUP, true),
-//                    new DetectBallInCatapult(),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArm(IntakeArm.IN_CATAPULT),
-//                        new StopRollers(),
-//                        new FullyExtendShoe(),
-//                    }),
-//                    new SequencedPause(1.0), // settle time
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new RetractShooter(),
-//                        new WaitForBallToLeave(),
-//                        new FullyRetractShoe(),
-//                    }),
-//                    new SequencedPause(0.5),
-//                    new SequencedDoubleItem(
-//                        new MoveArm(IntakeArm.PICKUP, true),
-//                        new Drive(-24)),
-//                    new DisableEncoderPID(),
-//                    new DetectBallInCatapult(),
-//                    new SequencedMultipleItem(new SequencedItem[] {
-//                        new MoveArm(IntakeArm.IN_CATAPULT),
-//                        new StopRollers(),
-//                        new Drive(30),
-//                        new FullyExtendShoe()
-//                    }),
-//                    new DisableEncoderPID(),
-//                    new SequencedPause(0.8), // settle time
-//                    new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
-//                    new RetractShooter()
-//                 });
-            // </editor-fold>
-
-            // AKA MARTY'S BABY
             case THREE_BALL_HOT:
                 return new Sequencer(new SequencedItem[] {
                     new SequencedMultipleItem(new SequencedItem[] {
@@ -402,9 +218,10 @@ public class SequencerFactory {
                     }),
                     new TurnToTarget(),
                     new DisableIMUPID(),
-                    new SequencedDoubleItem(
+                    new SequencedMultipleItem(new SequencedItem[] {
                         new SequencedPause(0.8),
-                        new DisableArmPID()),
+                        new DisableArmPID(),
+                    }),
                     new InnerSequencer(SequencerFactory.createShot(SequencerFactory.TARGET_SHOT_WITHOUT_RETRACTION)),
                     new SequencedMultipleItem(new SequencedItem[] {
                         new MoveArmNoWait(IntakeArm.PICKUP, false),
