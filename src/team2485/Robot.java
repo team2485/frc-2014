@@ -17,6 +17,7 @@ import team2485.util.Controllers;
  * @author Marty Kausas
  * @author Anoushka Bose
  * @author Camille Considine
+ * @author Aidan Fay
  * @author Mike Maunu
  */
 public class Robot extends IterativeRobot {
